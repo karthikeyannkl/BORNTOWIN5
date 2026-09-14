@@ -1,0 +1,52 @@
+<!doctype html><html lang="ta"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BORNTOWIN5 Admin</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6fa;font-family:Arial,"Noto Sans Tamil",sans-serif}header{background:linear-gradient(135deg,#481239,#8b315f);color:white;text-align:center;padding:20px}.logo{display:inline-flex;width:56px;height:56px;border-radius:16px;align-items:center;justify-content:center;background:#f2d47b;color:#481239;font-size:25px;font-weight:900}.brand{font-size:23px;font-weight:800;margin-top:7px}.wrap{max-width:700px;margin:auto;padding:15px}.card{background:#fff;padding:18px;border-radius:18px;margin:12px 0;box-shadow:0 5px 22px #0001}input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0 10px}button{width:100%;padding:13px;border:0;border-radius:12px;background:#6e1f50;color:#fff;font-weight:800;margin-top:7px}button.gray{background:#eee;color:#333}.stat{display:flex;justify-content:space-between;padding:11px;background:#faf5f8;border-radius:10px;margin:7px 0}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:8px;border-bottom:1px solid #eee;text-align:left}.pin{font-weight:900;letter-spacing:1px}select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0 10px}</style></head><body>
+<header><div class="logo">B5</div><div class="brand">BORNTOWIN5 ADMIN</div></header><div class="wrap">
+<section id="login" class="card"><h2>Admin Login</h2><input id="pass" type="password" placeholder="Admin Password"><button onclick="go()">Open Admin</button></section>
+<section id="panel" class="card" style="display:none"><h2>Admin Dashboard</h2>
+<div class="stat"><span>Registration Review</span><b>Pending / Verify / Reject</b></div>
+<div class="stat"><span>Member Management</span><b>Search / Member List</b></div>
+<div class="stat"><span>Message Center</span><b>All Members / Specific Member</b></div>
+<div class="stat"><span>Referral Tree</span><b>Level 1 – 7</b></div>
+<div class="stat"><span>PIN Management</span><b>Generate / Assign / Track</b></div>
+<hr>
+<h2>Joining PIN Management</h2>
+<div class="stat"><span>First Member Referral</span><b>FIRST MEMBER</b></div>
+<div class="stat"><span>First Registration PIN</span><b>B5-557269</b></div>
+<div class="muted">மேலே உள்ள PIN முதல் registration-க்கு reserved. அதற்குப் பிறகு இங்கிருந்து புதிய PINs generate செய்யலாம்.</div>
+<hr>
+<label>Generate PIN Count</label><input id="count" type="number" min="1" max="500" value="50">
+<label>Assign To</label><select id="leader"><option value="">Unassigned</option></select>
+<button onclick="gen()">Generate Random B5 PINs</button><div id="stats"></div>
+<div style="overflow:auto"><table><thead><tr><th>#</th><th>PIN</th><th>Status</th><th>Used By</th></tr></thead><tbody id="rows"></tbody></table></div>
+
+<hr>
+<h2>Member Search</h2>
+<input id="searchMember" placeholder="Mobile / Member ID / Name">
+<button onclick="searchMembers()">Search Member</button>
+<div id="memberResults"></div>
+
+<h2>Message Center</h2>
+<select id="messageTarget"><option value="ALL">All Members</option></select>
+<input id="messageText" placeholder="Type message">
+<button onclick="sendMessage()">Send Message</button>
+<div id="messageStatus" class="muted"></div>
+
+<h2>Registration Review</h2>
+<div id="reviewList" class="muted">No registrations pending review.</div>
+
+<h2>Referral Tree</h2>
+<div id="treeList" class="muted">No members yet.</div>
+<button class="gray" onclick="location.href='BORNTOWIN5_MEMBER.html'">Member Page</button></section></div>
+<script>
+let adminOK=false, members=[]; const $=id=>document.getElementById(id);
+async function api(url,opt={}){const r=await fetch(url,{headers:{'Content-Type':'application/json'},...opt});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||'Request failed');return j}
+async function go(){try{await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:$('pass').value})});adminOK=true;$('login').style.display='none';$('panel').style.display='block';await refresh()}catch(e){alert(e.message)}}
+async function refresh(){const m=await api('/api/admin/members');members=m.members;const sel=$('messageTarget'), leader=$('leader');sel.innerHTML='<option value="ALL">All Members</option>';leader.innerHTML='<option value="">Unassigned</option>';members.forEach(x=>{sel.innerHTML+=`<option value="${x.id}">${x.name} — ${x.id}</option>`;leader.innerHTML+=`<option value="${x.id}">${x.name} — ${x.id}</option>`});renderReview(m.pending||[]);renderTree(members);await loadPins()}
+async function gen(){try{const assignedTo=$('leader').value;const j=await api('/api/admin/pins/generate',{method:'POST',body:JSON.stringify({count:$('count').value,assignedTo})});$('stats').innerHTML=`<div class="stat"><span>Total Generated</span><b>${j.stats.generated}</b></div><div class="stat"><span>Used</span><b>${j.stats.used}</b></div><div class="stat"><span>Available</span><b>${j.stats.available}</b></div>`;await loadPins()}catch(e){alert(e.message)}}
+async function loadPins(){const j=await api('/api/admin/pins');$('stats').innerHTML=`<div class="stat"><span>Total Generated</span><b>${j.stats.generated}</b></div><div class="stat"><span>Used</span><b>${j.stats.used}</b></div><div class="stat"><span>Available</span><b>${j.stats.available}</b></div>`;$('rows').innerHTML=j.pins.map((p,i)=>{const a=members.find(m=>m.id===p.assignedTo),u=members.find(m=>m.id===p.usedBy);return `<tr><td>${i+1}</td><td class="pin">${p.pin}</td><td>${p.status}</td><td>${u?u.name+' — '+u.id:(a?a.name+' — '+a.id:'—')}</td></tr>`}).join('')}
+function searchMembers(){const q=$('searchMember').value.toLowerCase().trim();const r=members.filter(m=>[m.name,m.id,m.mobile].some(v=>String(v||'').toLowerCase().includes(q)));$('memberResults').innerHTML=r.length?r.map(m=>`<div class="stat"><span>${m.name}<br><small>${m.mobile}</small></span><b>${m.id}</b></div>`).join(''):'No member found'}
+async function sendMessage(){try{const j=await api('/api/admin/messages',{method:'POST',body:JSON.stringify({to:$('messageTarget').value,text:$('messageText').value})});$('messageStatus').textContent='Message sent successfully.';$('messageText').value=''}catch(e){alert(e.message)}}
+function renderReview(list){$('reviewList').innerHTML=members.length?members.map(m=>`<div class="stat"><span>${m.name}<br>${m.id}</span><b>${m.status}</b></div>`).join(''):'No registrations pending review.'}
+function renderTree(ms){$('treeList').innerHTML=ms.length?ms.map(m=>`<div class="stat"><span>${m.name}<br>${m.id}</span><b>Ref: ${m.referralId}</b></div>`).join(''):'No members yet.'}
+</script></body></html>

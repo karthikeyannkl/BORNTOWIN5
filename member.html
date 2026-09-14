@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ta"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BORNTOWIN5</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6fa;font-family:Arial,"Noto Sans Tamil",sans-serif;color:#202431}
+header{background:linear-gradient(135deg,#481239,#8b315f);color:white;text-align:center;padding:18px}.logo{width:56px;height:56px;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d6a743,#fff0b0);color:#481239;font-weight:900;font-size:25px}.brand{font-size:24px;font-weight:800;margin-top:7px}
+.wrap{max-width:680px;margin:auto;padding:15px}.card{background:#fff;border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 5px 22px #0001}h2{font-size:20px;margin:2px 0 14px}.muted{font-size:13px;color:#6d7585;line-height:1.5}
+label{display:block;font-size:13px;font-weight:700;margin-top:4px}.req{color:#d40000;font-weight:900}input,select,textarea{width:100%;padding:12px;border:1px solid #d6dae3;border-radius:11px;margin:6px 0 11px;font-size:15px}textarea{min-height:80px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{width:100%;padding:13px;border:0;border-radius:12px;background:#6e1f50;color:#fff;font-weight:800;font-size:15px;margin-top:7px}button.gray{background:#ececef;color:#333}
+.hide{display:none!important}.notice{padding:12px;border-radius:12px;background:#f5eaf1;color:#6e1f50;margin:10px 0;font-size:13px}.success{padding:14px;border-radius:12px;background:#eaf8f0;color:#17613f;margin:10px 0}.id{font-size:23px;font-weight:900;color:#6e1f50}
+.stat{display:flex;justify-content:space-between;padding:11px;background:#faf5f8;border-radius:10px;margin:7px 0}.pill{background:#e6f6ed;color:#17613f;padding:6px 9px;border-radius:18px;font-size:12px;font-weight:800}
+.level{border:1px solid #eee;border-radius:12px;padding:12px;margin:7px 0}.link{word-break:break-all;background:#f7f7f8;padding:10px;border-radius:9px;font-size:12px}.required-note{font-size:12px;color:#d40000;margin-bottom:8px}
+</style></head><body>
+<header><div class="logo">B5</div><div class="brand">BORNTOWIN5</div></header><div class="wrap">
+
+<section id="login" class="card">
+<h2>Member Login</h2><div class="muted">உங்கள் பதிவு செய்த Mobile Number மற்றும் OTP மூலம் Login செய்யலாம்.</div>
+<label>Mobile Number <span class="req">*</span></label>
+<input id="loginMobile" inputmode="numeric" maxlength="10" placeholder="10 digit Mobile Number">
+<button onclick="sendOtp()">Send OTP</button>
+<div id="otpArea" class="hide">
+<label>OTP <span class="req">*</span></label>
+<input id="otp" maxlength="6" inputmode="numeric" placeholder="123456">
+<button onclick="login()">Login</button>
+</div>
+<button class="gray" onclick="openReg()">New Member Registration</button>
+<div class="notice">Testing OTP: <b>123456</b></div>
+</section>
+
+<section id="reg" class="card hide"><h2>Member Registration</h2>
+<div class="required-note">* குறியிட்டுள்ளவை கட்டாயம்.</div>
+<label>Referral ID <span class="req">*</span></label><input id="ref" readonly>
+<label>Joining PIN <span class="req">*</span></label><input id="pin" placeholder="Admin வழங்கிய B5-XXXXXX">
+<div class="grid">
+<div><label>Member Name <span class="req">*</span></label><input id="name"></div>
+<div><label>Gender <span class="req">*</span></label><select id="gender"><option value="">Select</option><option>ஆண்</option><option>பெண்</option><option>மற்றவை</option></select></div>
+<div><label>Age <span class="req">*</span></label><input id="age"></div><div><label>Education <span class="req">*</span></label><input id="edu"></div>
+<div><label>Category <span class="req">*</span></label><input id="cat"></div><div><label>Skill <span class="req">*</span></label><input id="skill"></div></div>
+<label>Address <span class="req">*</span></label><textarea id="address"></textarea>
+<div class="grid">
+<div><label>Heir / Nominee <span class="req">*</span></label><input id="nominee"></div><div><label>Mobile Number <span class="req">*</span></label><input id="mobile"></div>
+<div><label>Bank Account Number <span class="req">*</span></label><input id="account"></div><div><label>IFSC <span class="req">*</span></label><input id="ifsc"></div>
+<div><label>Bank Name <span class="req">*</span></label><input id="bank"></div><div><label>Branch <span class="req">*</span></label><input id="branch"></div></div>
+<label>Photo <span class="req">*</span></label><input id="photo" type="file" accept="image/*">
+<label>Screenshot <span class="req">*</span></label><input id="shot" type="file" accept="image/*">
+<label><input id="dec" type="checkbox" style="width:auto"> தகவல்கள் சரியானவை என்று உறுதி செய்கிறேன். <span class="req">*</span></label>
+<button onclick="register()">Register & Activate</button><button class="gray" onclick="show('login')">Back</button></section>
+
+<section id="done" class="card hide"><h2>Registration Successful</h2><div class="success">பதிவு வெற்றிகரமாக முடிந்தது.</div>
+<div class="muted">உங்கள் Member ID</div><div class="id" id="newId"></div>
+<label>உங்கள் Referral Link</label><div class="link" id="newLink"></div>
+<button onclick="copyLink()">Copy Referral Link</button><button onclick="show('dash')">Open Dashboard</button></section>
+
+<section id="dash" class="hide"><div class="card"><h2>Member Dashboard</h2><div class="muted">Member ID</div><div class="id" id="mid"></div>
+<div class="stat"><span>Name</span><b id="mname"></b></div><div class="stat"><span>Mobile</span><b id="mmobile"></b></div>
+<div class="stat"><span>Status</span><span class="pill">ACTIVE</span></div>
+<label>Referral Link</label><div class="link" id="mLink"></div><button onclick="copy('mLink')">Copy Referral Link</button></div>
+<div class="card"><h2>Messages</h2><div id="msgs" class="muted">No messages.</div></div>
+<div class="card"><h2>My Referral Levels</h2><div id="levels"></div></div>
+<button class="gray" onclick="show('login')">Logout</button></section>
+</div>
+
+<script>
+let current=null, loginMobileValue='';
+const $=id=>document.getElementById(id); const show=id=>{['login','reg','done','dash'].forEach(x=>$(x).classList.add('hide'));$(id).classList.remove('hide')};
+async function api(url,opt={}){const r=await fetch(url,{headers:{'Content-Type':'application/json'},...opt});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||'Request failed');return j}
+function openReg(){ $('ref').value=new URL(location.href).searchParams.get('ref')||'FIRST MEMBER'; show('reg') }
+async function sendOtp(){const mobile=$('loginMobile').value.trim();try{const j=await api('/api/otp/request',{method:'POST',body:JSON.stringify({mobile})});loginMobileValue=mobile;$('otpArea').classList.remove('hide');alert('Testing OTP: '+j.testingOtp)}catch(e){alert(e.message)}}
+async function login(){try{const j=await api('/api/member/login',{method:'POST',body:JSON.stringify({mobile:loginMobileValue,otp:$('otp').value.trim()})});current=j.member;await loadDash();show('dash')}catch(e){alert(e.message)}}
+async function register(){const ids=['pin','name','gender','age','edu','cat','skill','address','nominee','mobile','account','ifsc','bank','branch'];for(const i of ids)if(!$(i).value.trim()){alert('அனைத்து * கட்டாய விவரங்களையும் நிரப்பவும்.');return}if(!$('dec').checked){alert('Declaration-ஐ tick செய்யவும்.');return}const b={pin:$('pin').value.trim(),name:$('name').value.trim(),gender:$('gender').value,age:$('age').value,edu:$('edu').value,cat:$('cat').value,skill:$('skill').value,address:$('address').value,nominee:$('nominee').value,mobile:$('mobile').value.trim(),account:$('account').value,ifsc:$('ifsc').value,bank:$('bank').value,branch:$('branch').value,ref:$('ref').value,dec:$('dec').checked};try{const j=await api('/api/register',{method:'POST',body:JSON.stringify(b)});current=j.member;$('newId').textContent=current.id;$('newLink').textContent=location.origin+j.referralLink;show('done')}catch(e){alert(e.message)}}
+async function loadDash(){const j=await api('/api/member/'+current.id);$('mid').textContent=j.member.id;$('mname').textContent=j.member.name;$('mmobile').textContent=j.member.mobile;$('mLink').textContent=location.origin+'/member.html?ref='+j.member.id;$('msgs').innerHTML=j.messages.length?j.messages.map(m=>'<div class="level"><b>'+new Date(m.createdAt).toLocaleString()+'</b><br>'+m.text+'</div>').join(''):'No messages.';let html='';j.levels.forEach((arr,i)=>{html+='<div class="level"><b>Level '+(i+1)+'</b><br>'+ (arr.length?arr.map(m=>m.name+' — '+m.id).join('<br>'):'No members')+'</div>'});$('levels').innerHTML=html||'No referrals yet.'}
+function copyLink(){navigator.clipboard?.writeText($('newLink').textContent);alert('Referral Link copied')};function copy(id){navigator.clipboard?.writeText($(id).textContent);alert('Copied')}
+</script></body></html>
