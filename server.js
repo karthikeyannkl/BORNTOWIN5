@@ -15,6 +15,8 @@ let db=load();
 function id(){return 'B5-'+crypto.randomBytes(3).toString('hex').toUpperCase()}
 function pin(){return 'B5-'+crypto.randomBytes(3).toString('hex').toUpperCase()}
 function memberPublic(m){return {memberId:m.memberId,name:m.name,mobile:m.mobile,status:m.status,referral:m.referral}}
+function memberDetails(m){return {...m}}
+function todayCount(){const d=new Date();const y=d.getFullYear(),mo=String(d.getMonth()+1).padStart(2,'0'),da=String(d.getDate()).padStart(2,'0');const key=`${y}-${mo}-${da}`;return db.members.filter(m=>String(m.registeredAt||'').slice(0,10)===key).length}
 function findMember(q){q=String(q||'').toLowerCase();return db.members.filter(m=>(m.name+' '+m.memberId+' '+m.mobile).toLowerCase().includes(q))}
 function descendants(rootId){
  let levels={1:[],2:[],3:[],4:[],5:[],6:[],7:[]}, current=[rootId];
@@ -29,7 +31,7 @@ function tree(rootId){
 }
 function wallet(memberId){
  const ps=db.pins.filter(p=>p.assignedTo===memberId);
- return {received:ps.length,used:ps.filter(p=>p.status==='USED').length,available:ps.filter(p=>p.status==='AVAILABLE').length,pins:ps.slice(-50)};
+ return {received:ps.length,used:ps.filter(p=>p.status==='USED').length,available:ps.filter(p=>p.status==='AVAILABLE').length,pins:ps.filter(p=>p.status==='AVAILABLE')};
 }
 app.get('/',(req,res)=>res.sendFile(path.join(__dirname,'member.html')));
 app.get('/member.html',(req,res)=>res.sendFile(path.join(__dirname,'member.html')));
@@ -40,9 +42,10 @@ app.post('/api/admin/password',(req,res)=>{if(req.body.oldPassword!==db.adminPas
 app.get('/api/admin/dashboard',(req,res)=>{
  const total=db.members.length,pending=db.members.filter(m=>m.status==='Pending').length,verified=db.members.filter(m=>m.status==='Verified').length;
  const report=db.members.map(m=>{const w=wallet(m.memberId);return {name:m.name,memberId:m.memberId,received:w.received,used:w.used,available:w.available}});
- res.json({total,pending,verified,members:db.members.map(memberPublic),pinReport:report});
+ res.json({total,pending,verified,todayRegistrations:todayCount(),members:db.members.map(memberPublic),pinReport:report,pinSummary:{sent:db.pins.length,used:db.pins.filter(p=>p.status==='USED').length,leaders:new Set(db.pins.filter(p=>p.assignedTo).map(p=>p.assignedTo)).size}});
 });
 app.get('/api/admin/members',(req,res)=>res.json({members:findMember(req.query.q).map(memberPublic)}));
+app.get('/api/admin/member-details/:id',(req,res)=>{const m=db.members.find(x=>x.memberId===req.params.id);if(!m)return res.status(404).json({error:'Member not found'});res.json({member:memberDetails(m)});});
 app.post('/api/admin/member-status',(req,res)=>{const m=db.members.find(x=>x.memberId===req.body.memberId);if(!m)return res.status(404).json({error:'Member not found'});m.status=req.body.status;save(db);res.json({ok:true,member:memberPublic(m)})});
 app.post('/api/admin/message',(req,res)=>{if(req.body.to==='all'){db.messages.push({to:'ALL',message:req.body.message,at:new Date().toISOString()})}else{if(!db.members.some(m=>m.memberId===req.body.memberId))return res.status(404).json({error:'Member not found'});db.messages.push({to:req.body.memberId,message:req.body.message,at:new Date().toISOString()})}save(db);res.json({ok:true})});
 app.post('/api/admin/pins/generate',(req,res)=>{
@@ -57,6 +60,7 @@ app.post('/api/member/login',(req,res)=>{const m=db.members.find(x=>x.mobile===r
 app.post('/api/member/check-pin',(req,res)=>{const p=String(req.body.pin||'').toUpperCase();if(!db.pins.some(x=>x.pin===p&&x.status==='AVAILABLE'))return res.status(400).json({error:'Invalid or unavailable Joining PIN'});res.json({ok:true})});
 app.post('/api/member/register',(req,res)=>{
  const b=req.body;
+ if(!/^\d{10}$/.test(String(b.mobile||'')))return res.status(400).json({error:'Mobile Number must be exactly 10 digits'});
  if(db.members.some(m=>m.mobile===b.mobile))return res.status(409).json({error:'Mobile number already registered'});
  const p=String(b.pin||'').toUpperCase(),pr=db.pins.find(x=>x.pin===p&&x.status==='AVAILABLE');
  if(!pr)return res.status(400).json({error:'Invalid or unavailable Joining PIN'});
@@ -64,12 +68,7 @@ app.post('/api/member/register',(req,res)=>{
  const m={...b,memberId:id(),status:'Pending',registeredAt:new Date().toISOString()};
  delete m.pin;db.members.push(m);pr.status='USED';pr.usedBy=m.memberId;pr.usedAt=new Date().toISOString();save(db);res.json({member:memberPublic(m)});
 });
-app.get('/api/member/messages/:id',(req,res)=>{
- const id=req.params.id;
- if(!db.members.some(m=>m.memberId===id)) return res.status(404).json({error:'Member not found'});
- const messages=db.messages.filter(x=>x.to===id||x.to==='ALL').sort((a,b)=>String(b.at).localeCompare(String(a.at)));
- res.json({messages});
-});
+app.get('/api/member/messages/:id',(req,res)=>{const id=req.params.id;if(!db.members.some(m=>m.memberId===id))return res.status(404).json({error:'Member not found'});res.json({messages:db.messages.filter(x=>x.to===id||x.to==='ALL').sort((a,b)=>String(b.at).localeCompare(String(a.at)))});});
 app.get('/api/member/dashboard/:id',(req,res)=>{
  const m=db.members.find(x=>x.memberId===req.params.id);if(!m)return res.status(404).json({error:'Member not found'});
  const lv=descendants(m.memberId),w=wallet(m.memberId);
