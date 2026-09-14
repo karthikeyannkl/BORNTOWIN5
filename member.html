@@ -148,7 +148,7 @@ function makeTree(n,l){
 let kids=n.children.length?`<div class="children">${n.children.map(x=>makeTree(x,l+1)).join("")}</div>`:"";
 return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${kids}</div>`;
 }
-b5RefreshLevelCounts();b5RenderTree();
+
 
 let walletAvail=0, walletUsed=0;
 function drawWalletPins(){
@@ -172,6 +172,13 @@ drawWalletPins();
 </script>
 
 <script>
+function b5Tab(tab){
+ const login=document.getElementById("b5LoginStep"), reg=document.getElementById("b5RegStep");
+ const lt=document.getElementById("b5LoginTab"), rt=document.getElementById("b5RegTab");
+ const isLogin=tab!=="register";
+ login.classList.toggle("on",isLogin); reg.classList.toggle("on",!isLogin);
+ lt.classList.toggle("on",isLogin); rt.classList.toggle("on",!isLogin);
+}
 async function b5mapi(url,options={}){
  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
  const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||'Request failed'); return d;
@@ -185,6 +192,8 @@ async function b5SendOtp(){
 async function b5Login(){
  const m=document.getElementById('b5LoginMobile').value.trim(),o=document.getElementById('b5LoginOtp').value.trim();
  const box=document.getElementById('b5LoginMsg');
+ if(!/^\d{10}$/.test(m)){box.className='b5-msg b5-err';box.textContent='சரியான 10 digit Mobile Number கொடுக்கவும்';return}
+ if(!/^\d{6}$/.test(o)){box.className='b5-msg b5-err';box.textContent='6 digit OTP கொடுக்கவும்';return}
  try{
   const d=await b5mapi('/api/member/login',{method:'POST',body:JSON.stringify({mobile:m,otp:o})});
   localStorage.setItem('BORNTOWIN5_MEMBER_ID',d.member.memberId);
@@ -197,13 +206,6 @@ function b5FillMember(m){
  document.getElementById('memberMobile').textContent=m.mobile;
  document.getElementById('memberStatus').textContent=m.status||'Pending';
  document.getElementById('memberAvatar').textContent=(m.name||'B5').charAt(0).toUpperCase();
-}
-async function b5CheckPin(){
- const p=document.getElementById('b5JoinPin').value.trim().toUpperCase(),msg=document.getElementById('b5PinMsg');
- try{const d=await b5mapi('/api/member/check-pin',{method:'POST',body:JSON.stringify({pin:p})});
-   msg.className='b5-msg b5-ok';msg.textContent='✓ PIN accepted. Registration form opened.';
-   document.getElementById('b5RegForm').style.display='block';
- }catch(e){msg.className='b5-msg b5-err';msg.textContent=e.message}
 }
 async function b5Register(){
  const ids=['rName','rGender','rAge','rAddress','rMobile','rReferral','rAccount','rIfsc','rBank','rBranch'];
@@ -248,6 +250,20 @@ async function useWalletPin(){
  const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;
  try{const d=await b5mapi('/api/member/use-pin',{method:'POST',body:JSON.stringify({memberId:id})});document.getElementById('walletAct').style.display='block';document.getElementById('walletAct').textContent='✓ 1 PIN USED — Member Activation. Available count '+d.wallet.available+' குறைந்தது.';await b5RefreshMember()}catch(e){alert(e.message)}
 }
+
+// Restore an already logged-in member after refresh.
+window.addEventListener('DOMContentLoaded', async ()=>{
+ const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');
+ if(!id)return;
+ try{
+  const d=await b5mapi('/api/member/dashboard/'+encodeURIComponent(id));
+  b5FillMember(d.member);
+  await b5RefreshMember();
+  document.getElementById('B5_MEMBER_GATE').style.display='none';
+ }catch(e){
+  localStorage.removeItem('BORNTOWIN5_MEMBER_ID');
+ }
+});
 </script>
 </body>
 </html>
