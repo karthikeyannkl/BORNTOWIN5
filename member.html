@@ -154,9 +154,35 @@ function memberLogout(){localStorage.removeItem('BORNTOWIN5_MEMBER_ID');location
 function copyReferralLink(){const e=document.getElementById('myReferralLink');e.select();navigator.clipboard?.writeText(e.value);alert('Referral link copied')}
 function makeTree(n,l){return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${n.children?.length?'<div class="children">'+n.children.map(x=>makeTree(x,l+1)).join('')+'</div>':''}</div>`}
 async function showLevel(level){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/level/'+encodeURIComponent(id)+'/'+level),box=document.getElementById('detail');box.style.display='block';box.innerHTML='<h3>Level '+level+' — '+d.members.length+' Members</h3>'+(d.members.map(x=>`<div class="member"><b>${x.name}</b><div class="small">${x.memberId} • ${x.mobile}</div></div>`).join('')||'<div class="small">இந்த Level-ல் தற்போது உறுப்பினர்கள் இல்லை.</div>')}catch(e){}}
-async function useWalletPin(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/use-pin',{method:'POST',body:JSON.stringify({memberId:id})});document.getElementById('walletAct').style.display='block';document.getElementById('walletAct').textContent='✓ 1 PIN USED — Available count '+d.wallet.available+' குறைந்தது.';await b5Refresh()}catch(e){alert(e.message)}}
+async function useWalletPin(){
+ const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID'); if(!id)return;
+ b5api('/api/member/dashboard/'+encodeURIComponent(id)).then(d=>{
+   const p=(d.wallet.pins||[]).find(x=>x.status==='AVAILABLE');
+   if(!p)return alert('Available PIN இல்லை');
+   b5SharePin(p.pin);
+ }).catch(()=>alert('Wallet load failed'));
+})});document.getElementById('walletAct').style.display='block';document.getElementById('walletAct').textContent='✓ 1 PIN USED — Available count '+d.wallet.available+' குறைந்தது.';await b5Refresh()}catch(e){alert(e.message)}}
 async function b5LoadMessages(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID'),el=document.getElementById('memberMessageList');if(!id||!el)return;try{const d=await b5api('/api/member/messages/'+encodeURIComponent(id));el.innerHTML=d.messages.length?d.messages.map(x=>`<div class="msgbox" style="margin-top:8px"><b>${x.to==='ALL'?'Admin':'Admin Message'}</b><div style="margin-top:5px">${String(x.message).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`).join(''):'<div class="small">இன்னும் messages இல்லை.</div>'}catch(e){}}
 function initMember(){const ref=new URLSearchParams(location.search).get('ref');if(ref){localStorage.removeItem('BORNTOWIN5_MEMBER_ID');document.getElementById('B5_MEMBER_GATE').style.display='block';b5Tab('register');document.getElementById('rReferral').value=ref;return}const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(id){document.getElementById('B5_MEMBER_GATE').style.display='none';b5Refresh();b5LoadMessages()}else{document.getElementById('B5_MEMBER_GATE').style.display='block';b5Tab('login')}}
 window.addEventListener('load',initMember);
 </script></body>
-</html>
+</html><style>
+.pin button{border:0;border-radius:8px;padding:6px 9px;background:#8b1e3f;color:#fff;font-weight:700;font-size:11px}
+</style>
+<script>
+async function b5SharePin(pin){
+ const phone=prompt('யாருக்கு இந்த PIN அனுப்ப வேண்டும்? 10 digit Mobile Number கொடுக்கவும்');
+ if(!phone)return;
+ if(!/^\d{10}$/.test(phone)){alert('சரியான 10 digit Mobile Number கொடுக்கவும்');return}
+ const text=`BORNTOWIN5 Joining PIN: ${pin}\nஇந்த PIN-ஐ பயன்படுத்தி Registration செய்து Activate செய்யுங்கள்.`;
+ window.open('https://wa.me/91'+phone+'?text='+encodeURIComponent(text),'_blank');
+}
+function b5RenderWalletPins(pins){
+ const el=document.getElementById('walletPins'); if(!el)return;
+ const a=(pins||[]).filter(x=>x.status==='AVAILABLE');
+ el.innerHTML=a.map(x=>`<div class="pin"><b>${x.pin}</b><small>AVAILABLE</small><button onclick="b5SharePin('${x.pin}')">Share</button></div>`).join('')||'<div class="small">Available PIN இல்லை.</div>';
+}
+</script><script>
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem('BORNTOWIN5_MEMBER_ID')){b5Refresh();b5LoadMessages()}});
+window.addEventListener('online',()=>{if(localStorage.getItem('BORNTOWIN5_MEMBER_ID')){b5Refresh();b5LoadMessages()}});
+</script>

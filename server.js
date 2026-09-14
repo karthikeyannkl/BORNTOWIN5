@@ -69,6 +69,12 @@ app.post('/api/member/register',(req,res)=>{
  delete m.pin;db.members.push(m);pr.status='USED';pr.usedBy=m.memberId;pr.usedAt=new Date().toISOString();save(db);res.json({member:memberPublic(m)});
 });
 app.get('/api/member/messages/:id',(req,res)=>{const id=req.params.id;if(!db.members.some(m=>m.memberId===id))return res.status(404).json({error:'Member not found'});res.json({messages:db.messages.filter(x=>x.to===id||x.to==='ALL').sort((a,b)=>String(b.at).localeCompare(String(a.at)))});});
+app.get('/api/member/wallet/:id',(req,res)=>{
+ const m=db.members.find(x=>x.memberId===req.params.id);
+ if(!m)return res.status(404).json({error:'Member not found'});
+ res.json({pins:wallet(m.memberId).pins});
+});
+
 app.get('/api/member/dashboard/:id',(req,res)=>{
  const m=db.members.find(x=>x.memberId===req.params.id);if(!m)return res.status(404).json({error:'Member not found'});
  const lv=descendants(m.memberId),w=wallet(m.memberId);

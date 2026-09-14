@@ -146,4 +146,14 @@ function renderPinReport(report){const el=document.getElementById('leaders');if(
 function drawTree(list){const el=document.getElementById('fullTree');if(!el)return;const children=id=>list.filter(m=>m.referral===id).map(m=>({name:m.name,id:m.memberId,referral:m.referral,children:children(m.memberId)}));const roots=list.filter(m=>!m.referral||m.referral==='FIRST MEMBER');el.innerHTML=roots.length?roots.map(r=>makeAdminTree({name:r.name,id:r.memberId,children:children(r.memberId)},0)).join(''):'<div class="small">இன்னும் உறுப்பினர்கள் பதிவு செய்யப்படவில்லை.</div>'}
 function makeAdminTree(n,l){return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${n.children?.length?'<div class="children">'+n.children.map(x=>makeAdminTree(x,l+1)).join('')+'</div>':''}</div>`}
 document.getElementById('rq')?.addEventListener('input',drawReview);window.addEventListener('load',loadAdminData);
-</script></body></html>
+</script></body></html><style>.nav button.active{background:#8b1e3f!important;color:#fff!important;border-color:#8b1e3f!important}</style>
+<script>
+(function(){
+ const oldTab=window.tab;
+ window.tab=function(id){
+   if(oldTab) oldTab(id);
+   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+   const b=document.getElementById('b-'+id); if(b)b.classList.add('active');
+ };
+})();
+</script>
