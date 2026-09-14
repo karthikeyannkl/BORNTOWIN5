@@ -109,6 +109,11 @@ button{border:0;border-radius:10px;padding:11px 14px;background:#8b1e3f;color:wh
 <div style="display:flex;gap:7px;align-items:center;margin-top:8px"><input id="myReferralLink" readonly style="flex:1;padding:10px;border:1px solid #dfe3ec;border-radius:10px;font-size:11px"><button onclick="copyReferral()">Copy</button><button onclick="shareReferral()">Share</button></div>
 </section>
 
+<section class="card" id="adminMessagesCard">
+<h3 style="margin:0">Admin Messages</h3>
+<div id="adminMessages" class="small" style="margin-top:8px">No messages.</div>
+</section>
+
 <section class="card">
 <h3 style="margin:0">My Downline</h3>
 <p class="small">உங்கள் கீழ் உள்ள உறுப்பினர்கள் மட்டும் இங்கே காட்டப்படும்.</p>
@@ -237,6 +242,7 @@ async function b5RefreshMember(){
   document.getElementById('walletAvailable').textContent=walletAvail;
   document.getElementById('walletBar').style.width=(d.wallet.received?walletAvail/d.wallet.received*100:0)+'%';
   document.getElementById('walletPins').innerHTML=(d.wallet.pins||[]).filter(x=>String(x.status||'').toUpperCase()==='AVAILABLE').map(x=>`<div class="pin"><b>${x.pin}</b><small>AVAILABLE</small><button style="margin-top:6px;padding:7px 9px;font-size:10px" onclick="sharePin('${x.pin}')">Share</button></div>`).join('');
+  try{const md=await b5mapi('/api/member/messages/'+encodeURIComponent(id));document.getElementById('adminMessages').innerHTML=(md.messages||[]).map(x=>'<div class="activity"><span>'+String(x.message).replace(/</g,'&lt;')+'</span><small>'+new Date(x.at).toLocaleString()+'</small></div>').join('')||'No messages.';}catch(e){}
  }catch(e){}
 }
 async function showLevel(level){
@@ -291,7 +297,14 @@ function b5Logout(){
 
 // Restore an already logged-in member after refresh.
 window.addEventListener('DOMContentLoaded', async ()=>{
+ const ref=new URLSearchParams(location.search).get('ref');
  b5SetReferralFromUrl();
+ // A referral link is always a registration link, never the referrer's dashboard.
+ if(ref&&ref.trim()){
+   document.getElementById('B5_MEMBER_GATE').style.display='block';
+   b5Tab('register');
+   return;
+ }
  const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');
  if(!id)return;
  try{
