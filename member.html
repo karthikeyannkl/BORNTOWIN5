@@ -57,11 +57,7 @@ button{border:0;border-radius:10px;padding:11px 14px;background:#8b1e3f;color:wh
 </section>
 
 <section id="b5RegStep" class="b5-step">
-<label>Joining PIN</label><input id="b5JoinPin" placeholder="Enter Joining PIN">
-<button class="b5-primary" onclick="b5CheckPin()">Continue</button>
-<div id="b5PinMsg" class="b5-msg"></div>
-
-<div id="b5RegForm" style="display:none">
+<div id="b5RegForm">
 <div class="b5-grid">
 <div><label>Member Name</label><input id="rName"></div>
 <div><label>Gender</label><select id="rGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div>
@@ -174,52 +170,7 @@ function useWalletPin(){
 }
 drawWalletPins();
 </script>
-<script>
-const B5_TEST_JOINING_PIN='';
-function b5Tab(t){
- document.getElementById('b5LoginStep').classList.toggle('on',t==='login');
- document.getElementById('b5RegStep').classList.toggle('on',t==='register');
- document.getElementById('b5LoginTab').classList.toggle('on',t==='login');
- document.getElementById('b5RegTab').classList.toggle('on',t==='register');
-}
-function b5SendOtp(){
- const m=document.getElementById('b5LoginMobile').value.trim(), box=document.getElementById('b5LoginMsg');
- if(!/^\d{10}$/.test(m)){box.className='b5-msg b5-err';box.textContent='சரியான 10 digit Mobile Number கொடுக்கவும்';return}
- box.className='b5-msg b5-ok';box.textContent='OTP sent. Test OTP: 123456';
-}
-function b5Login(){
- const m=document.getElementById('b5LoginMobile').value.trim(),o=document.getElementById('b5LoginOtp').value.trim(),d=JSON.parse(localStorage.getItem('BORNTOWIN5_MEMBER')||'null');
- const box=document.getElementById('b5LoginMsg');
- if(o!=='123456'){box.className='b5-msg b5-err';box.textContent='OTP சரியாக இல்லை';return}
- if(d && d.mobile===m){
-   document.getElementById('memberName').textContent=d.name;
-   document.getElementById('memberId').textContent=d.memberId;
-   document.getElementById('memberMobile').textContent=d.mobile;
-   document.getElementById('memberStatus').textContent=d.status||'Pending';
-   document.getElementById('memberAvatar').textContent=(d.name||'B5').charAt(0).toUpperCase();
- }
- document.getElementById('B5_MEMBER_GATE').style.display='none';
-}
-function b5CheckPin(){
- const p=document.getElementById('b5JoinPin').value.trim().toUpperCase(),msg=document.getElementById('b5PinMsg');
- if(p===B5_TEST_JOINING_PIN){
-   msg.className='b5-msg b5-ok';msg.textContent='✓ PIN accepted. Registration form opened.';
-   document.getElementById('b5RegForm').style.display='block';
- }else{
-   msg.className='b5-msg b5-err';msg.textContent='Invalid Joining PIN';
- }
-}
-function b5Register(){
- const ids=['rName','rGender','rAge','rAddress','rMobile','rReferral','rAccount','rIfsc','rBank','rBranch'];
- for(const id of ids){if(!document.getElementById(id).value.trim()){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='அனைத்து விவரங்களையும் நிரப்பவும்';return}}
- if(!/^\d{10}$/.test(document.getElementById('rMobile').value.trim())){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='சரியான Mobile Number கொடுக்கவும்';return}
- if(!document.getElementById('rDeclaration').checked){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='Declaration accept செய்யவும்';return}
- const d={memberId:'B5-'+Math.random().toString(36).slice(2,8).toUpperCase(),name:document.getElementById('rName').value.trim(),mobile:document.getElementById('rMobile').value.trim(),status:'Pending',referral:document.getElementById('rReferral').value.trim(),registeredAt:new Date().toISOString()};
- localStorage.setItem('BORNTOWIN5_MEMBER',JSON.stringify(d));
- document.getElementById('b5RegMsg').className='b5-msg b5-ok';
- document.getElementById('b5RegMsg').textContent='✓ Registration completed. Member ID: '+d.memberId;
-}
-</script>
+
 <script>
 async function b5mapi(url,options={}){
  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
