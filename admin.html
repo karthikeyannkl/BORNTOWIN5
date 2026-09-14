@@ -21,7 +21,7 @@
 #B5_ADMIN_ERR{display:none;color:#ae2929;text-align:center;font-size:11px;margin-top:8px}
 #B5_ADMIN_HINT{display:none;color:#227442;text-align:center;font-size:11px;margin-top:8px}
 </style>
-</head>
+<style>.top-actions{margin-left:auto;display:flex;gap:6px}.top-actions button{border:1px solid #e1e4ea;background:#fff;border-radius:9px;padding:7px 9px;font-weight:700;font-size:11px;color:#172033}.member-detail{background:#fafbfe;border:1px solid #e4e8ef;border-radius:12px;padding:12px;margin-top:10px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail-grid div{background:#fff;border:1px solid #eee;padding:8px;border-radius:8px}.detail-grid small{display:block;color:#7b8496;font-size:10px}.detail-grid b{font-size:12px;word-break:break-word}@media(max-width:520px){.top-actions button{padding:6px 7px;font-size:10px}.detail-grid{grid-template-columns:1fr}}</style></head>
 <body>
 <div id="B5_ADMIN_GATE">
   <div class="gate">
@@ -43,13 +43,15 @@
 </div>
 
 
-<header class="top"><div class="logo">B5</div><div class="brand"><b>BORNTOWIN5 Admin</b><small>Control Center</small></div><button onclick="b5AdminLogout()" style="margin-left:auto;border:0;border-radius:10px;padding:9px 11px;background:#f0f1f6;color:#30384d;font-weight:750">Logout</button></header>
+<header class="top"><div class="logo">B5</div><div class="brand"><b>BORNTOWIN5 Admin</b><small>Control Center</small></div><div class="top-actions"><button onclick="adminRefresh()">↻ Refresh</button><button onclick="adminLogout()">Logout</button></div></header>
 <main class="wrap">
 <section class="hero"><span class="pill whitepill">ADMIN CONTROL PANEL</span><h1>Welcome, Admin</h1><p>Registration • Members • Messages • PIN • Referral Tree</p></section>
 
 <div class="card">
 <div class="stats">
 <div class="stat"><b id="total">0</b><span>Total Members</span></div>
+<div class="stat"><b id="pending">0</b><span>Pending</span></div>
+<div class="stat"><b id="verified">0</b><span>Verified</span></div>
 </div>
 </div>
 
@@ -66,21 +68,22 @@
 </div>
 
 <section id="review" class="card panel">
-<span class="pill">REGISTRATION REVIEW</span><h3>New Registrations</h3>
-<div class="search"><input id="rq" placeholder="Mobile / Name / Member ID"></div>
+<span class="pill">REGISTRATION REVIEW</span><h3>Today's Registrations</h3>
+<div class="stats"><div class="stat"><b id="todayRegistrations">0</b><span>Registered Today</span><small>New registrations</small></div></div>
+<div class="search"><input id="rq" placeholder="Mobile / Name / Member ID"><select id="rf"><option>All</option><option>Pending</option><option>Verified</option><option>Rejected</option></select></div>
 <div id="reviewList"></div>
 </section>
 
 <section id="members" class="card panel hidden">
 <span class="pill">MEMBERS</span><h3>Member Search</h3>
 <div class="search"><input id="mq" placeholder="Mobile Number / Member ID / Name"><button class="btn send" style="width:auto;margin:0" onclick="memberSearch()">Search</button></div>
-<div id="memberList"></div>
+<div id="memberList"></div><div id="memberDetail"></div>
 </section>
 
 <section id="msg" class="card panel hidden">
 <span class="pill">MESSAGE CENTER</span><h3>Send Message</h3>
-<label class="small">Send To</label><select id="msgTo" onchange="toggleMobileSearch(this.value)"><option value="all">👥 All Members</option><option value="mobile">📱 Mobile Number</option></select>
-<div id="mobileSearch" class="hidden" style="margin-top:9px"><input id="targetMobile" type="tel" inputmode="numeric" maxlength="10" minlength="10" pattern="[0-9]{10}" placeholder="10 digit Mobile Number"><button type="button" class="btn send" onclick="findTarget()">🔎 Search Member</button><div id="target"></div></div>
+<label class="small">Send To</label><select id="msgTo"><option value="all">👥 All Members</option><option value="mobile">📱 Mobile Number</option></select>
+<div id="mobileSearch" class="hidden" style="margin-top:9px"><input id="targetMobile" placeholder="10 digit Mobile Number"><button class="btn send" onclick="findTarget()">Search Member</button><div id="target"></div></div>
 <textarea id="message" rows="5" placeholder="Message எழுதுங்கள்..." style="margin-top:10px"></textarea>
 <button class="btn send" onclick="sendMessage()">Send Message</button><div id="msgResult"></div>
 </section>
@@ -117,170 +120,30 @@
 </section>
 </main>
 
-<script>
-const B5_DEFAULT_ADMIN_PASSWORD='ADMIN';
-function b5GetAdminPassword(){return localStorage.getItem('BORNTOWIN5_ADMIN_PASSWORD')||B5_DEFAULT_ADMIN_PASSWORD}
-function b5AdminLogin(){
-  const p=document.getElementById('B5_ADMIN_PASSWORD').value;
-  const e=document.getElementById('B5_ADMIN_ERR');
-  if(p===b5GetAdminPassword()){
-    document.getElementById('B5_ADMIN_GATE').style.display='none';
-  }else{
-    e.textContent='Incorrect password'; e.style.display='block';
-  }
-}
-function b5ShowChange(){
-  document.getElementById('B5_CHANGE').style.display='block';
-  document.getElementById('B5_ADMIN_ERR').style.display='none';
-}
-function b5ChangePassword(){
-  const oldp=document.getElementById('B5_OLD_PASSWORD').value;
-  const np=document.getElementById('B5_NEW_PASSWORD').value;
-  const cp=document.getElementById('B5_CONFIRM_PASSWORD').value;
-  const e=document.getElementById('B5_ADMIN_ERR'), h=document.getElementById('B5_ADMIN_HINT');
-  if(oldp!==b5GetAdminPassword()){e.textContent='Current password is incorrect';e.style.display='block';return}
-  if(np.length<4){e.textContent='New password must be at least 4 characters';e.style.display='block';return}
-  if(np!==cp){e.textContent='New passwords do not match';e.style.display='block';return}
-  localStorage.setItem('BORNTOWIN5_ADMIN_PASSWORD',np);
-  h.textContent='✓ Password changed successfully';h.style.display='block';e.style.display='none';
-  document.getElementById('B5_CHANGE').style.display='none';
-}
-document.getElementById('B5_ADMIN_PASSWORD').addEventListener('keydown',e=>{if(e.key==='Enter')b5AdminLogin()});
-function b5AdminLogout(){document.getElementById('B5_ADMIN_GATE').style.display='flex';document.getElementById('B5_ADMIN_PASSWORD').value='';}
-</script>
+
+
+
+
+
+
 
 <script>
-async function api(url, options={}){
-  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(d.error||'Request failed');
-  return d;
-}
-async function b5AdminLogin(){
-  const p=document.getElementById('B5_ADMIN_PASSWORD').value;
-  try{
-    await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:p})});
-    document.getElementById('B5_ADMIN_GATE').style.display='none';
-    await loadAdminData();
-  }catch(e){
-    const x=document.getElementById('B5_ADMIN_ERR');x.textContent=e.message;x.style.display='block';
-  }
-}
-async function b5ChangePassword(){
-  const oldp=document.getElementById('B5_OLD_PASSWORD').value;
-  const np=document.getElementById('B5_NEW_PASSWORD').value;
-  const cp=document.getElementById('B5_CONFIRM_PASSWORD').value;
-  const e=document.getElementById('B5_ADMIN_ERR'),h=document.getElementById('B5_ADMIN_HINT');
-  if(np!==cp){e.textContent='New passwords do not match';e.style.display='block';return}
-  try{
-    await api('/api/admin/password',{method:'POST',body:JSON.stringify({oldPassword:oldp,newPassword:np})});
-    h.textContent='✓ Password changed successfully';h.style.display='block';e.style.display='none';
-    document.getElementById('B5_CHANGE').style.display='none';
-  }catch(err){e.textContent=err.message;e.style.display='block'}
-}
-async function loadAdminData(){
-  try{
-    const d=await api('/api/admin/dashboard');
-    document.getElementById('total').textContent=d.total;
-    const sel=document.getElementById('leader');
-    if(sel){
-      sel.innerHTML='<option value="">Select Member / Leader</option>'+
-        d.members.map(m=>`<option value="${m.memberId}">${m.name} — ${m.memberId}</option>`).join('');
-    }
-    window.__b5AdminMembers=d.members;
-    drawDynamicReview(d.members);
-    renderDynamicPinReport(d.pinReport);
-  }catch(e){}
-}
-function drawDynamicReview(list){
-  const q=(document.getElementById('rq')?.value||'').toLowerCase();
-  const f=document.getElementById('rf')?.value||'All';
-  const a=list.filter(m=>(m.name+m.mobile+m.memberId).toLowerCase().includes(q)&&(f==='All'||m.status===f));
-  document.getElementById('reviewList').innerHTML=a.map(m=>`<div class="member">
-    <div class="mh"><div><b>${m.name}</b><span class="small">${m.memberId} • ${m.mobile}</span></div>
-    </div>
-    <div class="small" style="margin-top:8px">Referral: ${m.referral||'FIRST MEMBER'}<br>Bank/IFSC: ✓ Submitted</div>
-    </div>`).join('')||'<p class="small">No registrations found.</p>';
-}
-async function dynamicStatus(id,status){
-  try{await api('/api/admin/member-status',{method:'POST',body:JSON.stringify({memberId:id,status})});await loadAdminData()}catch(e){alert(e.message)}
-}
-async function memberSearch(){
-  const q=document.getElementById('mq').value.trim();
-  try{
-    const d=await api('/api/admin/members?q='+encodeURIComponent(q));
-    document.getElementById('memberList').innerHTML=d.members.map(m=>`<div class="member"><b>${m.name}</b>
-      <div class="small">${m.memberId}<br>Mobile: ${m.mobile}<br>Referral: ${m.referral||'FIRST MEMBER'}</div><button class="btn send" style="margin-top:8px" onclick="selectMessageMember('${m.memberId}','${m.mobile}')">Select Member</button></div>`).join('')||'<p class="small">Member not found.</p>';
-  }catch(e){alert(e.message)}
-}
-function selectMessageMember(id,mobile){
-  const t=document.getElementById('target'); if(t){t.dataset.memberId=id;t.innerHTML='<div class="member"><b>✓ Selected Member</b><div class="small">'+id+' • '+mobile+'</div></div>';}
-  const n=document.getElementById('targetMobile'); if(n)n.value=mobile;
-  const s=document.getElementById('msgTo'); if(s)s.value='mobile'; toggleMobileSearch('mobile');
-}
-function toggleMobileSearch(value){
-  const box=document.getElementById('mobileSearch');
-  const target=document.getElementById('target');
-  const input=document.getElementById('targetMobile');
-  if(!box)return;
-  if(value==='mobile'){
-    box.classList.remove('hidden');
-    if(input) input.focus();
-  }else{
-    box.classList.add('hidden');
-    if(target){target.innerHTML='';delete target.dataset.memberId;}
-    if(input) input.value='';
-  }
-}
-
-async function sendMessage(){
-  const to=document.getElementById('msgTo').value;
-  const msg=document.getElementById('message').value.trim();
-  if(!msg){alert('Message எழுதுங்கள்');return}
-  let memberId='';
-  if(to==='mobile'){
-    memberId=document.getElementById('target')?.dataset?.memberId||'';
-    if(!memberId){alert('முதலில் valid Mobile Number search செய்யுங்கள்');return}
-  }
-  try{
-    await api('/api/admin/message',{method:'POST',body:JSON.stringify({memberId,to,message:msg})});
-    document.getElementById('msgResult').innerHTML='<div class="msgbox" style="margin-top:10px">✓ Message sent successfully.</div>';
-    document.getElementById('message').value='';
-  }catch(e){alert(e.message)}
-}
-async function findTarget(){
-  const n=document.getElementById('targetMobile').value.trim();
-  if(!/^\d{10}$/.test(n)){alert('சரியான 10 digit Mobile Number கொடுக்கவும்');return}
-  try{
-    const d=await api('/api/admin/members?q='+encodeURIComponent(n));
-    const m=d.members[0];
-    const el=document.getElementById('target');
-    if(m){el.dataset.memberId=m.memberId;el.innerHTML=`<div class="member"><b>✓ ${m.name}</b><div class="small">${m.memberId} • ${m.mobile}</div></div>`}
-    else{el.innerHTML='<div class="msgbox" style="margin-top:8px">Member not found.</div>'}
-  }catch(e){alert(e.message)}
-}
-async function generatePins(){
-  const n=+document.getElementById('qty').value;
-  const memberId=document.getElementById('leader').value;
-  if(!memberId){alert('Select Member / Leader');return}
-  try{
-    const d=await api('/api/admin/pins/generate',{method:'POST',body:JSON.stringify({memberId,quantity:n})});
-    document.getElementById('pinResult').innerHTML=`<div class="msgbox" style="margin-top:12px"><b>✓ ${d.pins.length} PINs generated & assigned</b>
-      <p class="small">${d.member.name} — ${d.member.memberId}<br>Available: ${d.available} • Used: ${d.used}</p>
-      <details><summary>Show PINs</summary><div class="pinbox" style="margin-top:8px">${d.pins.map(x=>'<div class="pin"><b>'+x.pin+'</b><span class="small">AVAILABLE</span></div>').join('')}</div></details></div>`;
-    await loadAdminData();
-  }catch(e){alert(e.message)}
-}
-async function renderDynamicPinReport(report){
-  const el=document.getElementById('leaders');
-  if(el) el.innerHTML=report.map(x=>`<div class="leader"><div class="lh"><div><b>${x.name}</b><div class="small">${x.memberId}</div></div><span class="pill green">Assigned</span></div>
-    <div class="grid" style="margin-top:9px"><div class="box"><b>${x.received}</b><small>Total Received</small></div>
-    <div class="box"><b>${x.available}</b><small>Available</small></div><div class="box"><b>${x.used}</b><small>Used</small></div>
-    <div class="box"><b>${x.received?Math.round(x.used/x.received*100):0}%</b><small>Activated</small></div></div></div>`).join('')||'<div class="small">இன்னும் PIN data இல்லை.</div>';
-}
-document.getElementById('rq')?.addEventListener('input',()=>drawDynamicReview(window.__b5AdminMembers||[]));
-
-document.getElementById('targetMobile')?.addEventListener('keydown',e=>{if(e.key==='Enter')findTarget()});
-document.getElementById('msgTo')?.addEventListener('change',e=>toggleMobileSearch(e.target.value));
-</script>
-</body></html>
+async function api(u,o={}){const r=await fetch(u,{headers:{'Content-Type':'application/json'},...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Request failed');return d}
+function tab(id){document.querySelectorAll('.panel').forEach(x=>x.classList.add('hidden'));document.getElementById(id)?.classList.remove('hidden');}
+async function b5AdminLogin(){try{await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:document.getElementById('B5_ADMIN_PASSWORD').value})});localStorage.setItem('B5_ADMIN_LOGIN','1');document.getElementById('B5_ADMIN_GATE').style.display='none';loadAdminData()}catch(e){const x=document.getElementById('B5_ADMIN_ERR');x.textContent=e.message;x.style.display='block'}}
+function adminLogout(){localStorage.removeItem('B5_ADMIN_LOGIN');location.reload()}
+async function adminRefresh(){await loadAdminData()}
+function b5ShowChange(){document.getElementById('B5_CHANGE').style.display='block'}
+async function b5ChangePassword(){const oldPassword=document.getElementById('B5_OLD_PASSWORD').value,newPassword=document.getElementById('B5_NEW_PASSWORD').value,confirm=document.getElementById('B5_CONFIRM_PASSWORD').value;if(newPassword!==confirm)return alert('New passwords do not match');try{await api('/api/admin/password',{method:'POST',body:JSON.stringify({oldPassword,newPassword})});alert('Password changed successfully');document.getElementById('B5_CHANGE').style.display='none'}catch(e){alert(e.message)}}
+async function loadAdminData(){try{const d=await api('/api/admin/dashboard');document.getElementById('total').textContent=d.total;document.getElementById('pending').textContent=d.pending;document.getElementById('verified').textContent=d.verified;document.getElementById('todayRegistrations').textContent=d.todayRegistrations;document.getElementById('totalSent').textContent=d.pinSummary.sent;document.getElementById('used').textContent=d.pinSummary.used;const leaders=document.querySelector('#pinreport .stats .stat:nth-child(2) b');if(leaders)leaders.textContent=d.pinSummary.leaders;window.__members=d.members;drawReview();const sel=document.getElementById('leader');if(sel)sel.innerHTML='<option value="">Select Member / Leader</option>'+d.members.map(m=>`<option value="${m.memberId}">${m.name} — ${m.memberId}</option>`).join('');renderPinReport(d.pinReport);drawTree(d.members);if(!localStorage.getItem('B5_ADMIN_LOGIN'))document.getElementById('B5_ADMIN_GATE').style.display='flex'}catch(e){}}
+function drawReview(){const list=window.__members||[],q=(document.getElementById('rq')?.value||'').toLowerCase(),f=document.getElementById('rf')?.value||'All';const a=list.filter(m=>(m.name+' '+m.mobile+' '+m.memberId).toLowerCase().includes(q)&&(f==='All'||m.status===f));document.getElementById('reviewList').innerHTML=a.map(m=>`<div class="member"><div class="mh"><div><b>${m.name}</b><span class="small">${m.memberId} • ${m.mobile}</span></div><span class="status ${m.status.toLowerCase()}">${m.status}</span></div><div class="small" style="margin-top:8px">Referral ID: ${m.referral||'FIRST MEMBER'}</div><div class="actions"><button class="p" onclick="dynamicStatus('${m.memberId}','Pending')">Pending</button><button class="v" onclick="dynamicStatus('${m.memberId}','Verified')">✓ Verify</button><button class="r" onclick="dynamicStatus('${m.memberId}','Rejected')">✕ Reject</button></div></div>`).join('')||'<p class="small">No registrations found.</p>'}
+async function dynamicStatus(id,status){try{await api('/api/admin/member-status',{method:'POST',body:JSON.stringify({memberId:id,status})});await loadAdminData()}catch(e){alert(e.message)}}
+async function memberSearch(){try{const d=await api('/api/admin/members?q='+encodeURIComponent(document.getElementById('mq').value));document.getElementById('memberList').innerHTML=d.members.map(m=>`<div class="member" onclick="showMemberDetails('${m.memberId}')" style="cursor:pointer"><b>${m.name}</b><div class="small">${m.memberId}<br>Mobile: ${m.mobile}<br>Status: ${m.status}<br>Referral ID: ${m.referral||'FIRST MEMBER'}</div><div class="small" style="margin-top:6px">Tap to view full details →</div></div>`).join('')||'<p class="small">Member not found.</p>'}catch(e){alert(e.message)}}
+async function showMemberDetails(id){try{const d=await api('/api/admin/member-details/'+encodeURIComponent(id)),m=d.member;const rows=Object.entries(m).filter(([k])=>!['pin'].includes(k)).map(([k,v])=>`<div><small>${k}</small><b>${String(v??'').replace(/</g,'&lt;')}</b></div>`).join('');document.getElementById('memberDetail').innerHTML=`<div class="member-detail"><h3 style="margin-top:0">${m.name} — Full Details</h3><div class="detail-grid">${rows}</div></div>`}catch(e){alert(e.message)}}
+async function findTarget(){try{const d=await api('/api/admin/members?q='+encodeURIComponent(document.getElementById('targetMobile').value.trim())),m=d.members[0],el=document.getElementById('target');if(m){el.dataset.memberId=m.memberId;el.innerHTML=`<div class="member"><b>✓ ${m.name}</b><div class="small">${m.memberId} • ${m.mobile}</div></div>`}else el.innerHTML='<div class="msgbox">Member not found.</div>'}catch(e){alert(e.message)}}
+async function sendMessage(){const msg=document.getElementById('message').value.trim(),to=document.getElementById('msgTo').value,memberId=document.getElementById('target')?.dataset?.memberId||'';if(!msg)return alert('Message எழுதுங்கள்');if(to==='mobile'&&!memberId)return alert('முதலில் Member search செய்யுங்கள்');try{await api('/api/admin/message',{method:'POST',body:JSON.stringify({to:to==='all'?'all':'mobile',memberId,message:msg})});document.getElementById('msgResult').innerHTML='<div class="msgbox" style="margin-top:10px">✓ Message sent successfully.</div>';document.getElementById('message').value=''}catch(e){alert(e.message)}}
+async function generatePins(){const quantity=Math.max(1,Number(document.getElementById('qty').value)||1),memberId=document.getElementById('leader').value;if(!memberId)return alert('Select Member / Leader');try{const d=await api('/api/admin/pins/generate',{method:'POST',body:JSON.stringify({memberId,quantity})});document.getElementById('pinResult').innerHTML=`<div class="msgbox"><b>✓ ${d.pins.length} PINs generated & assigned</b><p class="small">${d.member.name} — ${d.member.memberId}<br>Available: ${d.available} • Used: ${d.used}</p><details><summary>Show PINs</summary><div class="pinbox">${d.pins.map(x=>`<div class="pin"><b>${x.pin}</b><span class="small">AVAILABLE</span></div>`).join('')}</div></details></div>`;await loadAdminData()}catch(e){alert(e.message)}}
+function renderPinReport(report){const el=document.getElementById('leaders');if(el)el.innerHTML=report.map(x=>`<div class="leader"><div class="lh"><div><b>${x.name}</b><div class="small">${x.memberId}</div></div><span class="pill green">Assigned</span></div><div class="grid" style="margin-top:9px"><div class="box"><b>${x.received}</b><small>Total Received</small></div><div class="box"><b>${x.available}</b><small>Available</small></div><div class="box"><b>${x.used}</b><small>Used</small></div><div class="box"><b>${x.received?Math.round(x.used/x.received*100):0}%</b><small>Activated</small></div></div></div>`).join('')||'<div class="small">இன்னும் PIN data இல்லை.</div>'}
+function drawTree(list){const el=document.getElementById('fullTree');if(!el)return;el.innerHTML='<div class="small">Referral Tree dynamic-ஆக இங்கே வரும்.</div>'}
+document.getElementById('rq')?.addEventListener('input',drawReview);document.getElementById('rf')?.addEventListener('change',drawReview);window.addEventListener('load',loadAdminData);
+</script></body></html>
