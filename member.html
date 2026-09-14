@@ -112,11 +112,20 @@ button{border:0;border-radius:10px;padding:11px 14px;background:#8b1e3f;color:wh
 <div id="tree" class="tree"></div>
 </section>
 
+
+<section class="card" id="memberMessages">
+  <span class="tag">ADMIN MESSAGES</span>
+  <h3 style="margin:10px 0 4px">Messages</h3>
+  <div id="memberMessageList">
+    <div class="small">Admin அனுப்பிய messages இங்கே வரும்.</div>
+  </div>
+</section>
+
 <section class="card leadercard" id="leaderWallet">
   <span class="tag">LEADER PIN WALLET</span>
   <h3 style="margin:10px 0 4px">My PIN Wallet</h3>
   <div class="small">Admin உங்களுக்கு அனுப்பிய PINs இங்கே வரும். Used PIN மீண்டும் Available ஆகாது.</div>
-  <div class="balance" id="walletnce">0 PINs</div>
+  <div class="balance" id="walletBalance">0 PINs</div>
   <div class="small">Available PINs</div>
   <div class="progress"><div class="bar" id="walletBar" style="width:0%"></div></div>
   <div class="grid" style="margin-top:10px">
@@ -131,171 +140,25 @@ button{border:0;border-radius:10px;padding:11px 14px;background:#8b1e3f;color:wh
 </section>
 </main>
 
-<script>
-const levels={1:[],2:[],3:[],4:[],5:[],6:[],7:[]};
-function showLevel(level){
- b5BuildLevels();
- const box=document.getElementById("detail"),list=levels[level]||[];
- box.style.display="block";
- const items=list.map(x=>`<div class="member"><div><b>${x.name}</b><small>Member ID: ${x.memberId}<br>Mobile: ${x.mobile||""}</small></div><span class="tag">Level ${level}</span></div>`).join("");
- box.innerHTML=`<h3 style="margin:0">Level ${level} — ${list.length} Members</h3><p class="small">இந்த Level-ல் உள்ள உறுப்பினர்களின் விவரங்கள்</p>${items||'<div style="background:#fff5d9;padding:10px;border-radius:10px;font-size:12px">இந்த Level-ல் தற்போது உறுப்பினர்கள் இல்லை.</div>'}`;
- box.scrollIntoView({behavior:"smooth",block:"start"});
-}
-const treeData={name:"நீங்கள்",id:"",children:[
-{name:"",id:"",children:[
-{name:"",id:"",children:[{name:"",id:"",children:[]},{name:"",id:"",children:[]}]},
-{name:"",id:"",children:[]}]},
-{name:"",id:"",children:[]},
-{name:"",id:"",children:[]}]};
-function makeTree(n,l){
-let kids=n.children.length?`<div class="children">${n.children.map(x=>makeTree(x,l+1)).join("")}</div>`:"";
-return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${kids}</div>`;
-}
-b5RefreshLevelCounts();b5RenderTree();
 
-let walletAvail=0, walletUsed=0;
-function drawWalletPins(){
-  const arr=[];
-  const el=document.getElementById('walletPins');
-  if(el) el.innerHTML=arr.map((x,i)=>`<div class="pin"><b>${x}</b><small>${i<walletUsed?'USED':'AVAILABLE'}</small></div>`).join('');
-}
-function useWalletPin(){
-  if(walletAvail<=0)return;
-  walletAvail--; walletUsed++;
-  document.getElementById('walletnce').textContent=walletAvail+' PINs';
-  document.getElementById('walletUsed').textContent=walletUsed;
-  document.getElementById('walletReceived').textContent=walletAvail+walletUsed;
-  document.getElementById('walletAvailable').textContent=walletAvail;
-  document.getElementById('walletBar').style.width=(walletAvail/(walletAvail+walletUsed)*100)+'%';
-  document.getElementById('walletAct').style.display='block';
-  document.getElementById('walletAct').textContent='✓ 1 PIN USED — Member Activation . Available count 1 குறைந்தது.';
-  drawWalletPins();
-}
-drawWalletPins();
-</script>
+
+
+
 <script>
-const B5_TEST_JOINING_PIN='B5-000001';
-function b5Tab(t){
- document.getElementById('b5LoginStep').classList.toggle('on',t==='login');
- document.getElementById('b5RegStep').classList.toggle('on',t==='register');
- document.getElementById('b5LoginTab').classList.toggle('on',t==='login');
- document.getElementById('b5RegTab').classList.toggle('on',t==='register');
-}
-function b5SendOtp(){
- const m=document.getElementById('b5LoginMobile').value.trim(), box=document.getElementById('b5LoginMsg');
- if(!/^\d{10}$/.test(m)){box.className='b5-msg b5-err';box.textContent='சரியான 10 digit Mobile Number கொடுக்கவும்';return}
- box.className='b5-msg b5-ok';box.textContent='OTP sent. Test OTP: 123456';
-}
-function b5Login(){
- const m=document.getElementById('b5LoginMobile').value.trim(),o=document.getElementById('b5LoginOtp').value.trim(),d=JSON.parse(localStorage.getItem('BORNTOWIN5_MEMBER')||'null');
- const box=document.getElementById('b5LoginMsg');
- if(o!=='123456'){box.className='b5-msg b5-err';box.textContent='OTP சரியாக இல்லை';return}
- if(d && d.mobile===m){
-   document.getElementById('memberName').textContent=d.name;
-   document.getElementById('memberId').textContent=d.memberId;
-   document.getElementById('memberMobile').textContent=d.mobile;
-   document.getElementById('memberStatus').textContent=d.status||'Pending';
-   document.getElementById('memberAvatar').textContent=(d.name||'B5').charAt(0).toUpperCase();
- }
- document.getElementById('B5_MEMBER_GATE').style.display='none';
-}
-function b5CheckPin(){
- const p=document.getElementById('b5JoinPin').value.trim().toUpperCase(),msg=document.getElementById('b5PinMsg');
- if(p===B5_TEST_JOINING_PIN){
-   msg.className='b5-msg b5-ok';msg.textContent='✓ PIN accepted. Registration form opened.';
-   document.getElementById('b5RegForm').style.display='block';
- }else{
-   msg.className='b5-msg b5-err';msg.textContent='Invalid Joining PIN';
- }
-}
-function b5Register(){
- const ids=['rName','rGender','rAge','rEducation','rCategory','rSkill','rAddress','rNominee','rMobile','rReferral','rAccount','rIfsc','rBank','rBranch'];
- for(const id of ids){if(!document.getElementById(id).value.trim()){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='அனைத்து விவரங்களையும் நிரப்பவும்';return}}
- if(!/^\d{10}$/.test(document.getElementById('rMobile').value.trim())){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='சரியான Mobile Number கொடுக்கவும்';return}
- if(!document.getElementById('rDeclaration').checked){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='Declaration accept செய்யவும்';return}
- const d={memberId:'B5-'+Math.random().toString(36).slice(2,8).toUpperCase(),name:document.getElementById('rName').value.trim(),mobile:document.getElementById('rMobile').value.trim(),status:'Pending',referral:document.getElementById('rReferral').value.trim(),registeredAt:new Date().toISOString()};
- localStorage.setItem('BORNTOWIN5_MEMBER',JSON.stringify(d));
- document.getElementById('b5RegMsg').className='b5-msg b5-ok';
- document.getElementById('b5RegMsg').textContent='✓ Registration completed. Member ID: '+d.memberId;
-}
-</script>
-<script>
-async function b5mapi(url,options={}){
- const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
- const d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||'Request failed'); return d;
-}
-async function b5SendOtp(){
- const m=document.getElementById('b5LoginMobile').value.trim(),box=document.getElementById('b5LoginMsg');
- if(!/^\d{10}$/.test(m)){box.className='b5-msg b5-err';box.textContent='சரியான 10 digit Mobile Number கொடுக்கவும்';return}
- try{await b5mapi('/api/member/send-otp',{method:'POST',body:JSON.stringify({mobile:m})});box.className='b5-msg b5-ok';box.textContent='OTP sent. Test OTP: 123456'}
- catch(e){box.className='b5-msg b5-err';box.textContent=e.message}
-}
-async function b5Login(){
- const m=document.getElementById('b5LoginMobile').value.trim(),o=document.getElementById('b5LoginOtp').value.trim();
- const box=document.getElementById('b5LoginMsg');
- try{
-  const d=await b5mapi('/api/member/login',{method:'POST',body:JSON.stringify({mobile:m,otp:o})});
-  localStorage.setItem('BORNTOWIN5_MEMBER_ID',d.member.memberId);
-  b5FillMember(d.member); await b5RefreshMember(); document.getElementById('B5_MEMBER_GATE').style.display='none';
- }catch(e){box.className='b5-msg b5-err';box.textContent=e.message}
-}
-function b5FillMember(m){
- document.getElementById('memberName').textContent=m.name;
- document.getElementById('memberId').textContent=m.memberId;
- document.getElementById('memberMobile').textContent=m.mobile;
- document.getElementById('memberStatus').textContent=m.status||'Pending';
- document.getElementById('memberAvatar').textContent=(m.name||'B5').charAt(0).toUpperCase();
-}
-async function b5CheckPin(){
- const p=document.getElementById('b5JoinPin').value.trim().toUpperCase(),msg=document.getElementById('b5PinMsg');
- try{const d=await b5mapi('/api/member/check-pin',{method:'POST',body:JSON.stringify({pin:p})});
-   msg.className='b5-msg b5-ok';msg.textContent='✓ PIN accepted. Registration form opened.';
-   document.getElementById('b5RegForm').style.display='block';
- }catch(e){msg.className='b5-msg b5-err';msg.textContent=e.message}
-}
-async function b5Register(){
- const ids=['rName','rGender','rAge','rEducation','rCategory','rSkill','rAddress','rNominee','rMobile','rReferral','rAccount','rIfsc','rBank','rBranch'];
- for(const id of ids){if(!document.getElementById(id).value.trim()){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='அனைத்து விவரங்களையும் நிரப்பவும்';return}}
- if(!/^\d{10}$/.test(document.getElementById('rMobile').value.trim())){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='சரியான Mobile Number கொடுக்கவும்';return}
- if(!document.getElementById('rDeclaration').checked){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent='Declaration accept செய்யவும்';return}
- const d={name:document.getElementById('rName').value.trim(),gender:document.getElementById('rGender').value,age:document.getElementById('rAge').value,education:document.getElementById('rEducation').value.trim(),category:document.getElementById('rCategory').value.trim(),skill:document.getElementById('rSkill').value.trim(),address:document.getElementById('rAddress').value.trim(),nominee:document.getElementById('rNominee').value.trim(),mobile:document.getElementById('rMobile').value.trim(),referral:document.getElementById('rReferral').value.trim(),account:document.getElementById('rAccount').value.trim(),ifsc:document.getElementById('rIfsc').value.trim(),bank:document.getElementById('rBank').value.trim(),branch:document.getElementById('rBranch').value.trim(),pin:document.getElementById('b5JoinPin').value.trim().toUpperCase()};
- try{
-  const r=await b5mapi('/api/member/register',{method:'POST',body:JSON.stringify(d)});
-  localStorage.setItem('BORNTOWIN5_MEMBER_ID',r.member.memberId); b5FillMember(r.member);
-  document.getElementById('b5RegMsg').className='b5-msg b5-ok';document.getElementById('b5RegMsg').textContent='✓ Registration completed. Member ID: '+r.member.memberId;
-  await b5RefreshMember();
- }catch(e){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent=e.message}
-}
-async function b5RefreshMember(){
- const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID'); if(!id)return;
- try{
-  const d=await b5mapi('/api/member/dashboard/'+encodeURIComponent(id));
-  b5FillMember(d.member);
-  for(let i=1;i<=7;i++){const e=document.getElementById('lv'+i);if(e)e.textContent=d.levels[i]?.length||0}
-  const t=d.tree; document.getElementById('tree').innerHTML=makeTree(t,0);
-  walletAvail=d.wallet.available;walletUsed=d.wallet.used;
-  document.getElementById('walletBalance').textContent=walletAvail+' PINs';
-  document.getElementById('walletReceived').textContent=d.wallet.received;
-  document.getElementById('walletUsed').textContent=walletUsed;
-  document.getElementById('walletAvailable').textContent=walletAvail;
-  document.getElementById('walletBar').style.width=(d.wallet.received?walletAvail/d.wallet.received*100:0)+'%';
-  document.getElementById('walletPins').innerHTML=d.wallet.pins.map(x=>`<div class="pin"><b>${x.pin}</b><small>${x.status}</small></div>`).join('');
- }catch(e){}
-}
-async function showLevel(level){
- const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;
- try{
-  const d=await b5mapi('/api/member/level/'+encodeURIComponent(id)+'/'+level);
-  const box=document.getElementById('detail');box.style.display='block';
-  const items=d.members.map(x=>`<div class="member"><div><b>${x.name}</b><small>Member ID: ${x.memberId}<br>Mobile: ${x.mobile}</small></div><span class="tag">Level ${level}</span></div>`).join('');
-  box.innerHTML=`<h3 style="margin:0">Level ${level} — ${d.members.length} Members</h3><p class="small">இந்த Level-ல் உள்ள உறுப்பினர்களின் விவரங்கள்</p>${items||'<div style="background:#fff5d9;padding:10px;border-radius:10px;font-size:12px">இந்த Level-ல் தற்போது உறுப்பினர்கள் இல்லை.</div>'}`;
-  box.scrollIntoView({behavior:'smooth',block:'start'});
- }catch(e){}
-}
-async function useWalletPin(){
- const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;
- try{const d=await b5mapi('/api/member/use-pin',{method:'POST',body:JSON.stringify({memberId:id})});document.getElementById('walletAct').style.display='block';document.getElementById('walletAct').textContent='✓ 1 PIN USED — Member Activation. Available count '+d.wallet.available+' குறைந்தது.';await b5RefreshMember()}catch(e){alert(e.message)}
-}
+async function b5api(u,o={}){const r=await fetch(u,{headers:{'Content-Type':'application/json'},...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||'Request failed');return d}
+function b5Tab(x){document.getElementById('b5LoginTab')?.classList.toggle('active',x==='login');document.getElementById('b5RegTab')?.classList.toggle('active',x==='register');document.getElementById('b5LoginStep').style.display=x==='login'?'block':'none';document.getElementById('b5RegStep').style.display=x==='register'?'block':'none'}
+async function b5SendOtp(){const m=document.getElementById('b5LoginMobile').value.trim(),box=document.getElementById('b5LoginMsg');try{await b5api('/api/member/send-otp',{method:'POST',body:JSON.stringify({mobile:m})});box.className='b5-msg b5-ok';box.textContent='OTP sent. Test OTP: 123456'}catch(e){box.className='b5-msg b5-err';box.textContent=e.message}}
+async function b5Login(){const m=document.getElementById('b5LoginMobile').value.trim(),o=document.getElementById('b5LoginOtp').value.trim(),box=document.getElementById('b5LoginMsg');try{const d=await b5api('/api/member/login',{method:'POST',body:JSON.stringify({mobile:m,otp:o})});localStorage.setItem('BORNTOWIN5_MEMBER_ID',d.member.memberId);b5Fill(d.member);document.getElementById('B5_MEMBER_GATE').style.display='none';await b5Refresh();await b5LoadMessages()}catch(e){box.className='b5-msg b5-err';box.textContent=e.message}}
+function b5Fill(m){document.getElementById('memberName').textContent=m.name;document.getElementById('memberId').textContent=m.memberId;document.getElementById('memberMobile').textContent=m.mobile;document.getElementById('memberStatus').textContent=m.status||'Pending';document.getElementById('memberAvatar').textContent=(m.name||'B5').charAt(0).toUpperCase()}
+async function b5CheckPin(){const p=document.getElementById('b5JoinPin').value.trim().toUpperCase(),msg=document.getElementById('b5PinMsg');try{await b5api('/api/member/check-pin',{method:'POST',body:JSON.stringify({pin:p})});msg.className='b5-msg b5-ok';msg.textContent='✓ PIN accepted. Registration form opened.';document.getElementById('b5RegForm').style.display='block'}catch(e){msg.className='b5-msg b5-err';msg.textContent=e.message}}
+async function b5Register(){const ids=['rName','rGender','rAge','rEducation','rCategory','rSkill','rAddress','rNominee','rMobile','rReferral','rAccount','rIfsc','rBank','rBranch'];for(const id of ids)if(!document.getElementById(id).value.trim())return document.getElementById('b5RegMsg').textContent='அனைத்து விவரங்களையும் நிரப்பவும்';if(!document.getElementById('rDeclaration').checked)return document.getElementById('b5RegMsg').textContent='Declaration accept செய்யவும்';const b={name:document.getElementById('rName').value.trim(),gender:document.getElementById('rGender').value,age:document.getElementById('rAge').value,education:document.getElementById('rEducation').value.trim(),category:document.getElementById('rCategory').value.trim(),skill:document.getElementById('rSkill').value.trim(),address:document.getElementById('rAddress').value.trim(),nominee:document.getElementById('rNominee').value.trim(),mobile:document.getElementById('rMobile').value.trim(),referral:document.getElementById('rReferral').value.trim(),account:document.getElementById('rAccount').value.trim(),ifsc:document.getElementById('rIfsc').value.trim(),bank:document.getElementById('rBank').value.trim(),branch:document.getElementById('rBranch').value.trim(),pin:document.getElementById('b5JoinPin').value.trim().toUpperCase()};try{const d=await b5api('/api/member/register',{method:'POST',body:JSON.stringify(b)});localStorage.setItem('BORNTOWIN5_MEMBER_ID',d.member.memberId);b5Fill(d.member);document.getElementById('b5RegMsg').className='b5-msg b5-ok';document.getElementById('b5RegMsg').textContent='✓ Registration completed. Member ID: '+d.member.memberId;await b5Refresh();await b5LoadMessages()}catch(e){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent=e.message}}
+async function b5Refresh(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/dashboard/'+encodeURIComponent(id));b5Fill(d.member);for(let i=1;i<=7;i++)document.getElementById('lv'+i).textContent=d.levels[i]?.length||0;document.getElementById('tree').innerHTML=makeTree(d.tree,0);document.getElementById('walletBalance').textContent=d.wallet.available+' PINs';document.getElementById('walletReceived').textContent=d.wallet.received;document.getElementById('walletUsed').textContent=d.wallet.used;document.getElementById('walletAvailable').textContent=d.wallet.available;document.getElementById('walletBar').style.width=(d.wallet.received?d.wallet.available/d.wallet.received*100:0)+'%';document.getElementById('walletPins').innerHTML=d.wallet.pins.map(x=>`<div class="pin"><b>${x.pin}</b><small>${x.status}</small></div>`).join('')}catch(e){}}
+function makeTree(n,l){return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${n.children?.length?'<div class="children">'+n.children.map(x=>makeTree(x,l+1)).join('')+'</div>':''}</div>`}
+async function showLevel(level){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/level/'+encodeURIComponent(id)+'/'+level),box=document.getElementById('detail');box.style.display='block';box.innerHTML=`<h3>Level ${level} — ${d.members.length} Members</h3>`+(d.members.map(x=>`<div class="member"><b>${x.name}</b><div class="small">${x.memberId} • ${x.mobile}</div></div>`).join('')||'<div class="small">இந்த Level-ல் தற்போது உறுப்பினர்கள் இல்லை.</div>')}catch(e){}}
+async function useWalletPin(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/use-pin',{method:'POST',body:JSON.stringify({memberId:id})});document.getElementById('walletAct').style.display='block';document.getElementById('walletAct').textContent='✓ 1 PIN USED — Member Activation. Available count '+d.wallet.available+' குறைந்தது.';await b5Refresh()}catch(e){alert(e.message)}}
+async function b5LoadMessages(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID'),el=document.getElementById('memberMessageList');if(!id||!el)return;try{const d=await b5api('/api/member/messages/'+encodeURIComponent(id));el.innerHTML=d.messages.length?d.messages.map(x=>`<div class="msgbox" style="margin-top:8px"><b>${x.to==='ALL'?'Admin':'Admin Message'}</b><div style="margin-top:5px">${String(x.message).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>`).join(''):'<div class="small">இன்னும் messages இல்லை.</div>'}catch(e){}}
+function initMember(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(id){b5Refresh();b5LoadMessages()}}
+initMember();
 </script>
 </body>
 </html>
