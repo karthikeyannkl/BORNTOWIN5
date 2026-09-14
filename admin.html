@@ -1,52 +1,292 @@
-<!doctype html><html lang="ta"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BORNTOWIN5 Admin</title><style>
-*{box-sizing:border-box}body{margin:0;background:#f5f6fa;font-family:Arial,"Noto Sans Tamil",sans-serif}header{background:linear-gradient(135deg,#481239,#8b315f);color:white;text-align:center;padding:20px}.logo{display:inline-flex;width:56px;height:56px;border-radius:16px;align-items:center;justify-content:center;background:#f2d47b;color:#481239;font-size:25px;font-weight:900}.brand{font-size:23px;font-weight:800;margin-top:7px}.wrap{max-width:700px;margin:auto;padding:15px}.card{background:#fff;padding:18px;border-radius:18px;margin:12px 0;box-shadow:0 5px 22px #0001}input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0 10px}button{width:100%;padding:13px;border:0;border-radius:12px;background:#6e1f50;color:#fff;font-weight:800;margin-top:7px}button.gray{background:#eee;color:#333}.stat{display:flex;justify-content:space-between;padding:11px;background:#faf5f8;border-radius:10px;margin:7px 0}table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:8px;border-bottom:1px solid #eee;text-align:left}.pin{font-weight:900;letter-spacing:1px}select{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:6px 0 10px}</style></head><body>
-<header><div class="logo">B5</div><div class="brand">BORNTOWIN5 ADMIN</div></header><div class="wrap">
-<section id="login" class="card"><h2>Admin Login</h2><input id="pass" type="password" placeholder="Admin Password"><button onclick="go()">Open Admin</button></section>
-<section id="panel" class="card" style="display:none"><h2>Admin Dashboard</h2>
-<div class="stat"><span>Registration Review</span><b>Pending / Verify / Reject</b></div>
-<div class="stat"><span>Member Management</span><b>Search / Member List</b></div>
-<div class="stat"><span>Message Center</span><b>All Members / Specific Member</b></div>
-<div class="stat"><span>Referral Tree</span><b>Level 1 – 7</b></div>
-<div class="stat"><span>PIN Management</span><b>Generate / Assign / Track</b></div>
-<hr>
-<h2>Joining PIN Management</h2>
-<div class="stat"><span>First Member Referral</span><b>FIRST MEMBER</b></div>
-<div class="stat"><span>First Registration PIN</span><b>B5-557269</b></div>
-<div class="muted">மேலே உள்ள PIN முதல் registration-க்கு reserved. அதற்குப் பிறகு இங்கிருந்து புதிய PINs generate செய்யலாம்.</div>
-<hr>
-<label>Generate PIN Count</label><input id="count" type="number" min="1" max="500" value="50">
-<label>Assign To</label><select id="leader"><option value="">Unassigned</option></select>
-<button onclick="gen()">Generate Random B5 PINs</button><div id="stats"></div>
-<div style="overflow:auto"><table><thead><tr><th>#</th><th>PIN</th><th>Status</th><th>Used By</th></tr></thead><tbody id="rows"></tbody></table></div>
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#8b1e3f">
+<title>BORNTOWIN5 — Admin </title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif}.demo{background:#171c2b;color:#fff;text-align:center;padding:7px;font-size:11px}.top{height:64px;background:#fff;border-bottom:1px solid #e5e8ef;display:flex;align-items:center;gap:10px;padding:0 14px;position:sticky;top:0;z-index:5}.logo{width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:23px;font-weight:800}.brand b{display:block;font-size:15px}.brand small{display:block;color:#7b8496;font-size:10px}.wrap{max-width:760px;margin:auto;padding:15px 12px 35px}.card{background:#fff;border:1px solid #e3e7ef;border-radius:18px;padding:16px;margin-bottom:13px;box-shadow:0 5px 20px #00000008}.hero{background:linear-gradient(135deg,#681733,#a82d53);color:#fff;border-radius:19px;padding:22px 18px;margin-bottom:13px}.hero h1{margin:9px 0 4px;font-size:29px}.hero p{margin:0;color:#f8e9ed;font-size:12px}.pill{display:inline-block;background:#eee1e6;color:#8b1e3f;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800}.whitepill{background:#fff2;color:#fff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;border:1px solid #e5e8ef;border-radius:13px;padding:10px}.stat b{display:block;font-size:23px;color:#8b1e3f}.stat span{font-size:10px;color:#788196}.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.nav button,.btn{border:0;border-radius:10px;padding:11px;font-weight:750;cursor:pointer;font-size:12px}.nav button{background:#f0f1f6;color:#30384d}.nav button.active{background:#8b1e3f;color:#fff}.search{display:flex;gap:8px}.search input,.search select,input,textarea,select{width:100%;padding:11px;border:1px solid #dfe3ec;border-radius:10px;font:inherit;background:#fff}.member{border:1px solid #e4e8ef;border-radius:13px;padding:12px;margin-top:9px}.mh{display:flex;justify-content:space-between;gap:8px}.member b{display:block}.small{font-size:10px;color:#7b8496}.status{padding:4px 7px;border-radius:999px;font-size:9px}.pending{background:#fff0c2;color:#806000}.verified,.approved{background:#e1f4e7;color:#227442}.rejected{background:#fde5e5;color:#ae2929}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.actions button{border:0;border-radius:9px;padding:9px;font-weight:750}.v{background:#e1f4e7;color:#227442}.p{background:#fff0c2;color:#806000}.r{background:#fde5e5;color:#ae2929}.msgbox{background:#fff8fb;border-left:4px solid #8b1e3f;padding:12px;border-radius:10px}.pinbox{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pin{border:1px solid #e4e8ef;border-radius:10px;padding:10px}.pin b{display:block;color:#8b1e3f}.send{background:#8b1e3f;color:#fff;width:100%;margin-top:10px}.tree{border-top:1px solid #eee;margin-top:8px;padding-top:8px}.node{background:#fafbfe;border:1px solid #e4e8ef;border-radius:9px;padding:8px;margin:6px 0;font-size:11px}.children{margin-left:14px;border-left:2px solid #eee1e6;padding-left:9px}.hidden{display:none}@media(max-width:480px){.actions{grid-template-columns:1fr}.pinbox{grid-template-columns:1fr}}
 
-<hr>
-<h2>Member Search</h2>
-<input id="searchMember" placeholder="Mobile / Member ID / Name">
-<button onclick="searchMembers()">Search Member</button>
-<div id="memberResults"></div>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif}.demo{background:#171c2b;color:#fff;text-align:center;padding:7px;font-size:11px}.top{height:64px;background:#fff;border-bottom:1px solid #e6e9ef;display:flex;align-items:center;padding:0 14px;gap:10px;position:sticky;top:0;z-index:4}.logo{width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:23px;font-weight:800}.brand b{display:block;font-size:15px}.brand small{display:block;color:#7b8496;font-size:10px}.wrap{max-width:760px;margin:auto;padding:15px 12px 35px}.card{background:#fff;border:1px solid #e3e7ef;border-radius:18px;padding:16px;margin-bottom:13px;box-shadow:0 5px 20px #00000008}.nav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.nav button,.btn{border:0;border-radius:10px;padding:11px;font-weight:750;cursor:pointer;font-size:12px}.nav button{background:#f0f1f6;color:#30384d}.nav button.active{background:#8b1e3f;color:#fff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;border:1px solid #e5e8ef;border-radius:13px;padding:11px}.stat b{display:block;font-size:24px;color:#8b1e3f}.stat span{font-size:10px;color:#788196}.stat small{display:block;font-size:9px;color:#a06b7e;margin-top:2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.box{border:1px solid #e4e8ef;border-radius:12px;padding:11px;background:#fafbfe}.box b{display:block}.box small{font-size:10px;color:#7b8496}.leader{border:1px solid #e4e8ef;border-radius:13px;padding:13px;margin-top:9px}.lh{display:flex;justify-content:space-between;gap:8px}.pill{font-size:9px;padding:5px 7px;border-radius:999px;background:#eee1e6;color:#8b1e3f;font-weight:800}.green{background:#e1f4e7;color:#227442}.pinbox{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.pin{border:1px solid #e4e8ef;border-radius:9px;padding:9px}.pin b{color:#8b1e3f;font-size:12px}.pin small{display:block;color:#788196;font-size:9px}.primary{background:#8b1e3f;color:#fff}.light{background:#f0f1f6;color:#30384d}.full{width:100%;margin-top:9px}.leadercard{border:2px solid #eee1e6}.balance{font-size:30px;font-weight:800;color:#8b1e3f}.progress{height:9px;background:#e9ebf0;border-radius:99px;overflow:hidden;margin:8px 0}.bar{height:100%;background:#8b1e3f}.activity{display:flex;justify-content:space-between;border-bottom:1px solid #edf0f4;padding:10px 0;font-size:11px}.activity:last-child{border:0}.success{background:#eef7f0;color:#277642;border-radius:10px;padding:10px;font-size:11px;margin-top:10px}@media(max-width:520px){.grid{grid-template-columns:1fr}.pinbox{grid-template-columns:1fr}}
+</style>
 
-<h2>Message Center</h2>
-<select id="messageTarget"><option value="ALL">All Members</option></select>
-<input id="messageText" placeholder="Type message">
-<button onclick="sendMessage()">Send Message</button>
-<div id="messageStatus" class="muted"></div>
+<style>
+#B5_ADMIN_GATE{position:fixed;inset:0;background:#f5f7fb;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px}
+#B5_ADMIN_GATE .gate{width:100%;max-width:430px;background:#fff;border:1px solid #e3e7ef;border-radius:20px;padding:22px;box-shadow:0 8px 28px #00000012}
+#B5_ADMIN_GATE .glogo{width:60px;height:60px;border-radius:15px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;margin:0 auto 10px}
+#B5_ADMIN_GATE h2{text-align:center;margin:5px 0}.b5sub{text-align:center;color:#7b8496;font-size:12px}
+#B5_ADMIN_GATE input{width:100%;padding:11px;border:1px solid #dfe3ec;border-radius:10px;font:inherit;margin-top:10px}
+#B5_ADMIN_GATE button{width:100%;border:0;border-radius:10px;padding:11px;background:#8b1e3f;color:#fff;font-weight:800;margin-top:10px}
+#B5_ADMIN_ERR{display:none;color:#ae2929;text-align:center;font-size:11px;margin-top:8px}
+#B5_ADMIN_HINT{display:none;color:#227442;text-align:center;font-size:11px;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="B5_ADMIN_GATE">
+  <div class="gate">
+    <div class="glogo">B5</div>
+    <h2>BORNTOWIN5 Admin</h2>
+    <div class="b5sub">Admin Login</div>
+    <input id="B5_ADMIN_PASSWORD" type="password" placeholder="Enter Admin Password" autocomplete="off">
+    <button onclick="b5AdminLogin()">Login</button>
+    <button onclick="b5ShowChange()" style="background:#f0f1f6;color:#30384d">Change Password</button>
+    <div id="B5_ADMIN_ERR">Incorrect password</div>
+    <div id="B5_ADMIN_HINT"></div>
+    <div id="B5_CHANGE" style="display:none">
+      <input id="B5_OLD_PASSWORD" type="password" placeholder="Current Password">
+      <input id="B5_NEW_PASSWORD" type="password" placeholder="New Password">
+      <input id="B5_CONFIRM_PASSWORD" type="password" placeholder="Confirm New Password">
+      <button onclick="b5ChangePassword()">Save New Password</button>
+    </div>
+  </div>
+</div>
 
-<h2>Registration Review</h2>
-<div id="reviewList" class="muted">No registrations pending review.</div>
 
-<h2>Referral Tree</h2>
-<div id="treeList" class="muted">No members yet.</div>
-<button class="gray" onclick="location.href='BORNTOWIN5_MEMBER.html'">Member Page</button></section></div>
+<header class="top"><div class="logo">B5</div><div class="brand"><b>BORNTOWIN5 Admin</b><small>Control Center</small></div></header>
+<main class="wrap">
+<section class="hero"><span class="pill whitepill">ADMIN CONTROL PANEL</span><h1>Welcome, Admin</h1><p>Registration • Members • Messages • PIN • Referral Tree</p></section>
+
+<div class="card">
+<div class="stats">
+<div class="stat"><b id="total">0</b><span>Total Members</span></div>
+<div class="stat"><b id="pending">0</b><span>Pending</span></div>
+<div class="stat"><b id="verified">0</b><span>Verified</span></div>
+</div>
+</div>
+
+<div class="card">
+<div class="nav">
+<button id="b-review" class="active" onclick="tab('review')">📝 Registrations</button>
+<button id="b-members" onclick="tab('members')">👥 Members</button>
+<button id="b-msg" onclick="tab('msg')">📢 Messages</button>
+<button id="b-pin" onclick="tab('pin')">🔐 PIN Management</button>
+<button id="b-pinreport" onclick="tab('pinreport')">📊 Admin PIN Report</button>
+<button id="b-tree" onclick="tab('tree')">🌳 Referral Tree</button>
+<button id="b-settings" onclick="tab('settings')">⚙️ Settings</button>
+</div>
+</div>
+
+<section id="review" class="card panel">
+<span class="pill">REGISTRATION REVIEW</span><h3>New Registrations</h3>
+<div class="search"><input id="rq" placeholder="Mobile / Name / Member ID"><select id="rf"><option>All</option><option>Pending</option><option>Verified</option><option>Rejected</option></select></div>
+<div id="reviewList"></div>
+</section>
+
+<section id="members" class="card panel hidden">
+<span class="pill">MEMBERS</span><h3>Member Search</h3>
+<div class="search"><input id="mq" placeholder="Mobile Number / Member ID / Name"><button class="btn send" style="width:auto;margin:0" onclick="memberSearch()">Search</button></div>
+<div id="memberList"></div>
+</section>
+
+<section id="msg" class="card panel hidden">
+<span class="pill">MESSAGE CENTER</span><h3>Send Message</h3>
+<label class="small">Send To</label><select id="msgTo"><option value="all">👥 All Members</option><option value="mobile">📱 Mobile Number</option></select>
+<div id="mobileSearch" class="hidden" style="margin-top:9px"><input id="targetMobile" placeholder="10 digit Mobile Number"><button class="btn send" onclick="findTarget()">Search Member</button><div id="target"></div></div>
+<textarea id="message" rows="5" placeholder="Message எழுதுங்கள்..." style="margin-top:10px"></textarea>
+<button class="btn send" onclick="sendMessage()">Send Message</button><div id="msgResult"></div>
+</section>
+
+<section id="pin" class="card panel hidden">
+<span class="pill">PIN MANAGEMENT</span><h3>Generate & Assign Joining PINs</h3>
+<label class="small">Leader</label><select id="leader"><option value="">Select Member / Leader</option></select>
+<label class="small" style="display:block;margin-top:10px">Quantity</label><select id="qty"><option>10</option><option>20</option><option>50</option><option>100</option></select>
+<button class="btn send" onclick="generatePins()">Generate & Assign PINs</button>
+<div id="pinResult"></div>
+</section>
+
+<section id="pinreport" class="card panel hidden">
+<span class="pill">ADMIN PIN REPORT</span>
+<h3>PIN Distribution & Leader Report</h3>
+<div class="card"><h3 style="margin-top:0">PIN Distribution Summary</h3><div class="stats">
+<div class="stat"><b id="totalSent">0</b><span>Total PINs Sent</span><small>All time</small></div>
+<div class="stat"><b>0</b><span>Leaders</span><small>Received PINs</small></div>
+<div class="stat"><b id="used">0</b><span>PINs Used</span><small>Activated</small></div>
+</div></div>
+
+<div class="card"><h3 style="margin-top:0">Daily PIN Distribution</h3><div class="success">இன்னும் PIN distribution data இல்லை.</div></div><div class="card"><h3 style="margin-top:0">Leader-wise PIN Distribution</h3>
+<div id="leaders"></div>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Recent PIN Activity</h3><div class="small">இன்னும் activity இல்லை.</div></div></section>
+
+<section id="tree" class="card panel hidden"><span class="pill">FULL REFERRAL TREE</span><h3>All Members Downline</h3><div id="fullTree"><div class="small">இன்னும் உறுப்பினர்கள் பதிவு செய்யப்படவில்லை.</div></div></section>
+
+<section id="settings" class="card panel hidden">
+<span class="pill">ADMIN SETTINGS</span><h3>System Settings</h3>
+<div class="msgbox"><b> Mode</b><p class="small">Production version-ல் Admin authentication, database, SMS OTP, Drive storage மற்றும் audit log இணைக்கப்படும்.</p></div>
+<button class="btn send" onclick="alert(' settings saved')">Save Settings</button>
+</section>
+</main>
+
 <script>
-let adminOK=false, members=[]; const $=id=>document.getElementById(id);
-async function api(url,opt={}){const r=await fetch(url,{headers:{'Content-Type':'application/json'},...opt});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||'Request failed');return j}
-async function go(){try{await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:$('pass').value})});adminOK=true;$('login').style.display='none';$('panel').style.display='block';await refresh()}catch(e){alert(e.message)}}
-async function refresh(){const m=await api('/api/admin/members');members=m.members;const sel=$('messageTarget'), leader=$('leader');sel.innerHTML='<option value="ALL">All Members</option>';leader.innerHTML='<option value="">Unassigned</option>';members.forEach(x=>{sel.innerHTML+=`<option value="${x.id}">${x.name} — ${x.id}</option>`;leader.innerHTML+=`<option value="${x.id}">${x.name} — ${x.id}</option>`});renderReview(m.pending||[]);renderTree(members);await loadPins()}
-async function gen(){try{const assignedTo=$('leader').value;const j=await api('/api/admin/pins/generate',{method:'POST',body:JSON.stringify({count:$('count').value,assignedTo})});$('stats').innerHTML=`<div class="stat"><span>Total Generated</span><b>${j.stats.generated}</b></div><div class="stat"><span>Used</span><b>${j.stats.used}</b></div><div class="stat"><span>Available</span><b>${j.stats.available}</b></div>`;await loadPins()}catch(e){alert(e.message)}}
-async function loadPins(){const j=await api('/api/admin/pins');$('stats').innerHTML=`<div class="stat"><span>Total Generated</span><b>${j.stats.generated}</b></div><div class="stat"><span>Used</span><b>${j.stats.used}</b></div><div class="stat"><span>Available</span><b>${j.stats.available}</b></div>`;$('rows').innerHTML=j.pins.map((p,i)=>{const a=members.find(m=>m.id===p.assignedTo),u=members.find(m=>m.id===p.usedBy);return `<tr><td>${i+1}</td><td class="pin">${p.pin}</td><td>${p.status}</td><td>${u?u.name+' — '+u.id:(a?a.name+' — '+a.id:'—')}</td></tr>`}).join('')}
-function searchMembers(){const q=$('searchMember').value.toLowerCase().trim();const r=members.filter(m=>[m.name,m.id,m.mobile].some(v=>String(v||'').toLowerCase().includes(q)));$('memberResults').innerHTML=r.length?r.map(m=>`<div class="stat"><span>${m.name}<br><small>${m.mobile}</small></span><b>${m.id}</b></div>`).join(''):'No member found'}
-async function sendMessage(){try{const j=await api('/api/admin/messages',{method:'POST',body:JSON.stringify({to:$('messageTarget').value,text:$('messageText').value})});$('messageStatus').textContent='Message sent successfully.';$('messageText').value=''}catch(e){alert(e.message)}}
-function renderReview(list){$('reviewList').innerHTML=members.length?members.map(m=>`<div class="stat"><span>${m.name}<br>${m.id}</span><b>${m.status}</b></div>`).join(''):'No registrations pending review.'}
-function renderTree(ms){$('treeList').innerHTML=ms.length?ms.map(m=>`<div class="stat"><span>${m.name}<br>${m.id}</span><b>Ref: ${m.referralId}</b></div>`).join(''):'No members yet.'}
-</script></body></html>
+const members=[];
+let pinCount=0;
+function tab(id){document.querySelectorAll('.panel').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));document.getElementById('b-'+id).classList.add('active')}
+function drawReview(){let q=(document.getElementById('rq')?.value||'').toLowerCase(),f=document.getElementById('rf')?.value||'All';let a=members.filter(m=>(m.name+m.mobile+m.id).toLowerCase().includes(q)&&(f==='All'||m.status===f));document.getElementById('reviewList').innerHTML=a.map(m=>`<div class="member"><div class="mh"><div><b>${m.name}</b><span class="small">${m.id} • ${m.mobile}</span></div><span class="status ${m.status.toLowerCase()}">${m.status}</span></div><div class="small" style="margin-top:8px">Referral: ${m.ref} • Registered: ${m.date}<br>Photo: ✓ Uploaded &nbsp; Screenshot: ✓ Uploaded<br>Bank/IFSC: ✓ Submitted</div><div class="actions"><button class="p" onclick="status('${m.id}','Pending')">Pending</button><button class="v" onclick="status('${m.id}','Verified')">✓ Verify</button><button class="r" onclick="status('${m.id}','Rejected')">✕ Reject</button></div></div>`).join('')||'<p class="small">No registrations found.</p>'}
+function status(id,s){let m=members.find(x=>x.id===id);if(m){m.status=s;drawReview();updateStats();alert(m.name+' → '+s)}}
+function updateStats(){document.getElementById('pending').textContent=members.filter(x=>x.status==='Pending').length;document.getElementById('verified').textContent=members.filter(x=>x.status==='Verified'||x.status==='Approved').length}
+function memberSearch(){let q=document.getElementById('mq').value.toLowerCase();let a=members.filter(m=>(m.name+m.mobile+m.id).toLowerCase().includes(q));document.getElementById('memberList').innerHTML=a.map(m=>`<div class="member"><b>${m.name}</b><div class="small">${m.id}<br>Mobile: ${m.mobile}<br>Status: ${m.status}</div></div>`).join('')||'<p class="small">Member not found.</p>'}
+document.getElementById('msgTo').onchange=e=>document.getElementById('mobileSearch').classList.toggle('hidden',e.target.value!=='mobile');
+function findTarget(){let n=document.getElementById('targetMobile').value.trim(),m=members.find(x=>x.mobile===n);document.getElementById('target').innerHTML=m?`<div class="member"><b>✓ ${m.name}</b><div class="small">${m.id} • ${m.mobile}</div></div>`:'<div class="msgbox" style="margin-top:8px">Member not found.</div>'}
+function sendMessage(){let to=document.getElementById('msgTo').value,msg=document.getElementById('message').value.trim();if(!msg){alert('Message எழுதுங்கள்');return}if(to==='mobile'&&!members.some(x=>x.mobile===document.getElementById('targetMobile').value.trim())){alert('முதலில் valid Mobile Number search செய்யுங்கள்');return}document.getElementById('msgResult').innerHTML='<div class="msgbox" style="margin-top:10px">✓ Message sent successfully ().</div>'}
+function generatePins(){let n=+document.getElementById('qty').value,leader=document.getElementById('leader').value;let arr=[];for(let i=0;i<n;i++)arr.push('BW5-'+Math.random().toString(36).slice(2,8).toUpperCase());pinCount+=n;document.getElementById('pinResult').innerHTML=`<div class="msgbox" style="margin-top:12px"><b>✓ ${n} PINs generated & assigned</b><p class="small">${leader}<br>Available: ${n} • Used: 0</p><details><summary>Show PINs</summary><div class="pinbox" style="margin-top:8px">${arr.slice(0,20).map(x=>'<div class="pin"><b>'+x+'</b><span class="small">AVAILABLE</span></div>').join('')}</div>${n>20?'<p class="small"> preview shows first 20 PINs.</p>':''}</details></div>`}
+function makeTree(n,l=0){return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${n.children?.length?'<div class="children">'+n.children.map(x=>makeTree(x,l+1)).join('')+'</div>':''}</div>`}
+document.getElementById('fullTree').innerHTML='<div class="small">இன்னும் உறுப்பினர்கள் பதிவு செய்யப்படவில்லை.</div>';
+document.getElementById('rq').oninput=drawReview;document.getElementById('rf').onchange=drawReview;drawReview();updateStats();
+
+function renderPinReport(){
+  const ls=[];
+  const el=document.getElementById('leaders');
+  if(el) el.innerHTML=ls.map(x=>`<div class="leader"><div class="lh"><div><b>${x[0]}</b><div class="small">${x[1]}</div></div><span class="pill green">Assigned</span></div><div class="grid" style="margin-top:9px"><div class="box"><b>${x[2]}</b><small>Total Received</small></div><div class="box"><b>${x[2]-x[3]}</b><small>Available</small></div><div class="box"><b>${x[3]}</b><small>Used</small></div><div class="box"><b>${Math.round(x[3]/x[2]*100)}%</b><small>Activated</small></div></div></div>`).join('');
+}
+renderPinReport();
+</script>
+
+<script>
+const B5_DEFAULT_ADMIN_PASSWORD='ADMIN';
+function b5GetAdminPassword(){return localStorage.getItem('BORNTOWIN5_ADMIN_PASSWORD')||B5_DEFAULT_ADMIN_PASSWORD}
+function b5AdminLogin(){
+  const p=document.getElementById('B5_ADMIN_PASSWORD').value;
+  const e=document.getElementById('B5_ADMIN_ERR');
+  if(p===b5GetAdminPassword()){
+    document.getElementById('B5_ADMIN_GATE').style.display='none';
+  }else{
+    e.textContent='Incorrect password'; e.style.display='block';
+  }
+}
+function b5ShowChange(){
+  document.getElementById('B5_CHANGE').style.display='block';
+  document.getElementById('B5_ADMIN_ERR').style.display='none';
+}
+function b5ChangePassword(){
+  const oldp=document.getElementById('B5_OLD_PASSWORD').value;
+  const np=document.getElementById('B5_NEW_PASSWORD').value;
+  const cp=document.getElementById('B5_CONFIRM_PASSWORD').value;
+  const e=document.getElementById('B5_ADMIN_ERR'), h=document.getElementById('B5_ADMIN_HINT');
+  if(oldp!==b5GetAdminPassword()){e.textContent='Current password is incorrect';e.style.display='block';return}
+  if(np.length<4){e.textContent='New password must be at least 4 characters';e.style.display='block';return}
+  if(np!==cp){e.textContent='New passwords do not match';e.style.display='block';return}
+  localStorage.setItem('BORNTOWIN5_ADMIN_PASSWORD',np);
+  h.textContent='✓ Password changed successfully';h.style.display='block';e.style.display='none';
+  document.getElementById('B5_CHANGE').style.display='none';
+}
+document.getElementById('B5_ADMIN_PASSWORD').addEventListener('keydown',e=>{if(e.key==='Enter')b5AdminLogin()});
+</script>
+
+<script>
+async function api(url, options={}){
+  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||'Request failed');
+  return d;
+}
+async function b5AdminLogin(){
+  const p=document.getElementById('B5_ADMIN_PASSWORD').value;
+  try{
+    await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:p})});
+    document.getElementById('B5_ADMIN_GATE').style.display='none';
+    await loadAdminData();
+  }catch(e){
+    const x=document.getElementById('B5_ADMIN_ERR');x.textContent=e.message;x.style.display='block';
+  }
+}
+async function b5ChangePassword(){
+  const oldp=document.getElementById('B5_OLD_PASSWORD').value;
+  const np=document.getElementById('B5_NEW_PASSWORD').value;
+  const cp=document.getElementById('B5_CONFIRM_PASSWORD').value;
+  const e=document.getElementById('B5_ADMIN_ERR'),h=document.getElementById('B5_ADMIN_HINT');
+  if(np!==cp){e.textContent='New passwords do not match';e.style.display='block';return}
+  try{
+    await api('/api/admin/password',{method:'POST',body:JSON.stringify({oldPassword:oldp,newPassword:np})});
+    h.textContent='✓ Password changed successfully';h.style.display='block';e.style.display='none';
+    document.getElementById('B5_CHANGE').style.display='none';
+  }catch(err){e.textContent=err.message;e.style.display='block'}
+}
+async function loadAdminData(){
+  try{
+    const d=await api('/api/admin/dashboard');
+    document.getElementById('total').textContent=d.total;
+    document.getElementById('pending').textContent=d.pending;
+    document.getElementById('verified').textContent=d.verified;
+    const sel=document.getElementById('leader');
+    if(sel){
+      sel.innerHTML='<option value="">Select Member / Leader</option>'+
+        d.members.map(m=>`<option value="${m.memberId}">${m.name} — ${m.memberId}</option>`).join('');
+    }
+    window.__b5AdminMembers=d.members;
+    drawDynamicReview(d.members);
+    renderDynamicPinReport(d.pinReport);
+  }catch(e){}
+}
+function drawDynamicReview(list){
+  const q=(document.getElementById('rq')?.value||'').toLowerCase();
+  const f=document.getElementById('rf')?.value||'All';
+  const a=list.filter(m=>(m.name+m.mobile+m.memberId).toLowerCase().includes(q)&&(f==='All'||m.status===f));
+  document.getElementById('reviewList').innerHTML=a.map(m=>`<div class="member">
+    <div class="mh"><div><b>${m.name}</b><span class="small">${m.memberId} • ${m.mobile}</span></div>
+    <span class="status ${String(m.status).toLowerCase()}">${m.status}</span></div>
+    <div class="small" style="margin-top:8px">Referral: ${m.referral||'FIRST MEMBER'}<br>Bank/IFSC: ✓ Submitted</div>
+    <div class="actions"><button class="p" onclick="dynamicStatus('${m.memberId}','Pending')">Pending</button>
+    <button class="v" onclick="dynamicStatus('${m.memberId}','Verified')">✓ Verify</button>
+    <button class="r" onclick="dynamicStatus('${m.memberId}','Rejected')">✕ Reject</button></div></div>`).join('')||'<p class="small">No registrations found.</p>';
+}
+async function dynamicStatus(id,status){
+  try{await api('/api/admin/member-status',{method:'POST',body:JSON.stringify({memberId:id,status})});await loadAdminData()}catch(e){alert(e.message)}
+}
+async function memberSearch(){
+  const q=document.getElementById('mq').value.trim();
+  try{
+    const d=await api('/api/admin/members?q='+encodeURIComponent(q));
+    document.getElementById('memberList').innerHTML=d.members.map(m=>`<div class="member"><b>${m.name}</b>
+      <div class="small">${m.memberId}<br>Mobile: ${m.mobile}<br>Status: ${m.status}<br>Referral: ${m.referral||'FIRST MEMBER'}</div></div>`).join('')||'<p class="small">Member not found.</p>';
+  }catch(e){alert(e.message)}
+}
+async function sendMessage(){
+  const to=document.getElementById('msgTo').value;
+  const msg=document.getElementById('message').value.trim();
+  if(!msg){alert('Message எழுதுங்கள்');return}
+  let memberId='';
+  if(to==='mobile'){
+    memberId=document.getElementById('target')?.dataset?.memberId||'';
+    if(!memberId){alert('முதலில் valid Mobile Number search செய்யுங்கள்');return}
+  }
+  try{
+    await api('/api/admin/message',{method:'POST',body:JSON.stringify({memberId,to,message:msg})});
+    document.getElementById('msgResult').innerHTML='<div class="msgbox" style="margin-top:10px">✓ Message sent successfully.</div>';
+    document.getElementById('message').value='';
+  }catch(e){alert(e.message)}
+}
+async function findTarget(){
+  const n=document.getElementById('targetMobile').value.trim();
+  try{
+    const d=await api('/api/admin/members?q='+encodeURIComponent(n));
+    const m=d.members[0];
+    const el=document.getElementById('target');
+    if(m){el.dataset.memberId=m.memberId;el.innerHTML=`<div class="member"><b>✓ ${m.name}</b><div class="small">${m.memberId} • ${m.mobile}</div></div>`}
+    else{el.innerHTML='<div class="msgbox" style="margin-top:8px">Member not found.</div>'}
+  }catch(e){alert(e.message)}
+}
+async function generatePins(){
+  const n=+document.getElementById('qty').value;
+  const memberId=document.getElementById('leader').value;
+  if(!memberId){alert('Select Member / Leader');return}
+  try{
+    const d=await api('/api/admin/pins/generate',{method:'POST',body:JSON.stringify({memberId,quantity:n})});
+    document.getElementById('pinResult').innerHTML=`<div class="msgbox" style="margin-top:12px"><b>✓ ${d.pins.length} PINs generated & assigned</b>
+      <p class="small">${d.member.name} — ${d.member.memberId}<br>Available: ${d.available} • Used: ${d.used}</p>
+      <details><summary>Show PINs</summary><div class="pinbox" style="margin-top:8px">${d.pins.map(x=>'<div class="pin"><b>'+x.pin+'</b><span class="small">AVAILABLE</span></div>').join('')}</div></details></div>`;
+    await loadAdminData();
+  }catch(e){alert(e.message)}
+}
+async function renderDynamicPinReport(report){
+  const el=document.getElementById('leaders');
+  if(el) el.innerHTML=report.map(x=>`<div class="leader"><div class="lh"><div><b>${x.name}</b><div class="small">${x.memberId}</div></div><span class="pill green">Assigned</span></div>
+    <div class="grid" style="margin-top:9px"><div class="box"><b>${x.received}</b><small>Total Received</small></div>
+    <div class="box"><b>${x.available}</b><small>Available</small></div><div class="box"><b>${x.used}</b><small>Used</small></div>
+    <div class="box"><b>${x.received?Math.round(x.used/x.received*100):0}%</b><small>Activated</small></div></div></div>`).join('')||'<div class="small">இன்னும் PIN data இல்லை.</div>';
+}
+document.getElementById('rq')?.addEventListener('input',()=>drawDynamicReview(window.__b5AdminMembers||[]));
+document.getElementById('rf')?.addEventListener('change',()=>drawDynamicReview(window.__b5AdminMembers||[]));
+</script>
+</body></html>

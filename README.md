@@ -1,27 +1,14 @@
-# BORNTOWIN5 Dynamic Test Project
+# BORNTOWIN5 Dynamic Final
 
-This package converts the existing two-page BORNTOWIN5 UI into a Node.js/Express dynamic test application.
+Original Admin and Member UI retained. Dynamic server APIs are connected.
 
-## Current test behavior
-- Member login: Mobile Number + OTP
-- Testing OTP: `123456`
+- Member: Login with Mobile + OTP `123456`
+- Registration: Joining PIN required
+- First/root referral: `FIRST MEMBER`
 - Admin password: `ADMIN`
-- Registration and PIN usage are server-side API operations
-- Random `B5-XXXXXX` Member IDs and PINs
-- Referral chain API up to 7 levels
-- Admin PIN generation/assignment, member search, messages and tree
-- Data is stored in `data/db.json` for local testing.
+- Admin password can be changed from the login screen
+- Registration, members, verification, PINs, messages and referral levels use server-side JSON storage for testing
+- Start: `npm install` then `npm start`
+- Render: Build `npm install`, Start `npm start`
 
-## Run locally
-```bash
-npm install
-npm start
-```
-Open `http://localhost:3000/member.html` and `http://localhost:3000/admin.html`.
-
-## Render
-Create a Web Service from this repository and use:
-- Build Command: `npm install`
-- Start Command: `npm start`
-
-Important: the included JSON file is suitable for testing only. Render's free service can restart/redeploy and local filesystem data should not be treated as permanent production storage. Before production, replace the JSON store with PostgreSQL, add secure sessions/authentication, real SMS OTP, and protected file storage.
+For production, replace JSON storage with PostgreSQL, secure sessions/authentication, real SMS OTP and persistent file storage.

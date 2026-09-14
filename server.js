@@ -1,26 +1,82 @@
 const express=require('express');
-const fs=require('fs'); const path=require('path');
-const app=express(); app.use(express.json({limit:'5mb'}));
-const PORT=process.env.PORT||3000;
-const DATA=process.env.DATA_FILE||path.join(__dirname,'data','db.json');
-function load(){try{return JSON.parse(fs.readFileSync(DATA,'utf8'))}catch(e){return {members:[],pins:[{pin:'B5-557269',status:'AVAILABLE',assignedTo:null,usedBy:null}],messages:[],pending:[]}}}
-let db=load(); function save(){fs.mkdirSync(path.dirname(DATA),{recursive:true});fs.writeFileSync(DATA,JSON.stringify(db,null,2))}
-function rid(){let x; do{x='B5-'+Math.floor(100000+Math.random()*900000)}while(db.members.some(m=>m.id===x)||db.pins.some(p=>p.pin===x)); return x}
-function pin(){let x; do{x='B5-'+Math.floor(100000+Math.random()*900000)}while(db.pins.some(p=>p.pin===x)||db.members.some(m=>m.id===x)); return x}
-function levels(member){let out=[];let parents=new Set([member.id]);for(let l=1;l<=7;l++){let ids=db.members.filter(m=>parents.has(m.referralId)).map(m=>m.id);out.push(db.members.filter(m=>ids.includes(m.id)).map(m=>({id:m.id,name:m.name,mobile:m.mobile,status:m.status})));parents=new Set(ids);if(!ids.length)break}return out}
-app.get('/',(req,res)=>res.redirect('/member.html'));
+const fs=require('fs');
+const path=require('path');
+const crypto=require('crypto');
+const app=express();
+app.use(express.json({limit:'2mb'}));
+app.use(express.static(__dirname));
+
+const DB_FILE=path.join(__dirname,'db.json');
+function freshDB(){return {adminPassword:'ADMIN',members:[],pins:[],messages:[]};}
+function load(){try{return JSON.parse(fs.readFileSync(DB_FILE,'utf8'))}catch(e){const d=freshDB();save(d);return d}}
+function save(d){fs.writeFileSync(DB_FILE,JSON.stringify(d,null,2))}
+let db=load();
+
+function id(){return 'B5-'+crypto.randomBytes(3).toString('hex').toUpperCase()}
+function pin(){return 'B5-'+crypto.randomBytes(3).toString('hex').toUpperCase()}
+function memberPublic(m){return {memberId:m.memberId,name:m.name,mobile:m.mobile,status:m.status,referral:m.referral}}
+function findMember(q){q=String(q||'').toLowerCase();return db.members.filter(m=>(m.name+' '+m.memberId+' '+m.mobile).toLowerCase().includes(q))}
+function descendants(rootId){
+ let levels={1:[],2:[],3:[],4:[],5:[],6:[],7:[]}, current=[rootId];
+ for(let l=1;l<=7;l++){const next=db.members.filter(m=>current.includes(m.referral)).map(m=>m.memberId);levels[l]=db.members.filter(m=>next.includes(m.memberId));current=next;if(!current.length)break}
+ return levels;
+}
+function tree(rootId){
+ const root=db.members.find(m=>m.memberId===rootId);
+ if(!root)return {name:'நீங்கள்',id:'Not Registered',children:[]};
+ const kids=(id)=>db.members.filter(m=>m.referral===id).map(m=>({name:m.name,id:m.memberId,children:kids(m.memberId)}));
+ return {name:root.name,id:root.memberId,children:kids(root.memberId)};
+}
+function wallet(memberId){
+ const ps=db.pins.filter(p=>p.assignedTo===memberId);
+ return {received:ps.length,used:ps.filter(p=>p.status==='USED').length,available:ps.filter(p=>p.status==='AVAILABLE').length,pins:ps.slice(-50)};
+}
+app.get('/',(req,res)=>res.sendFile(path.join(__dirname,'member.html')));
 app.get('/member.html',(req,res)=>res.sendFile(path.join(__dirname,'member.html')));
 app.get('/admin.html',(req,res)=>res.sendFile(path.join(__dirname,'admin.html')));
-app.get('/api/health',(req,res)=>res.json({ok:true,app:'BORNTOWIN5',dynamic:true}));
-app.post('/api/admin/login',(req,res)=>{if(req.body.password==='ADMIN')return res.json({ok:true});res.status(401).json({error:'Invalid admin password'})});
-app.post('/api/otp/request',(req,res)=>{const mobile=String(req.body.mobile||'').trim();const m=db.members.find(x=>x.mobile===mobile);if(!/^\d{10}$/.test(mobile)||!m)return res.status(404).json({error:'இந்த Mobile Number பதிவு செய்யப்படவில்லை.'});res.json({ok:true,testingOtp:'123456',memberId:m.id})});
-app.post('/api/member/login',(req,res)=>{const mobile=String(req.body.mobile||'').trim();if(req.body.otp!=='123456')return res.status(401).json({error:'Invalid OTP'});const m=db.members.find(x=>x.mobile===mobile);if(!m)return res.status(404).json({error:'Member not found'});res.json({ok:true,member:{id:m.id,name:m.name,mobile:m.mobile,status:m.status,referralId:m.referralId}})});
-app.get('/api/member/:id',(req,res)=>{const m=db.members.find(x=>x.id===req.params.id);if(!m)return res.status(404).json({error:'Not found'});res.json({member:m,levels:levels(m),messages:db.messages.filter(x=>x.to==='ALL'||x.to===m.id)})});
-app.post('/api/register',(req,res)=>{const b=req.body||{};const required=['pin','name','gender','age','edu','cat','skill','address','nominee','mobile','account','ifsc','bank','branch'];for(const k of required)if(!String(b[k]||'').trim())return res.status(400).json({error:'அனைத்து கட்டாய விவரங்களையும் நிரப்பவும்.'});if(!b.dec)return res.status(400).json({error:'Declaration-ஐ tick செய்யவும்.'});const ref=b.ref||'FIRST MEMBER';if(ref!=='FIRST MEMBER'&&!db.members.some(m=>m.id===ref))return res.status(400).json({error:'Referral ID valid இல்லை.'});if(db.members.some(m=>m.mobile===String(b.mobile).trim()))return res.status(400).json({error:'Mobile Number ஏற்கனவே உள்ளது.'});const p=db.pins.find(x=>x.pin===String(b.pin).trim()&&x.status==='AVAILABLE');if(!p)return res.status(400).json({error:'Joining PIN valid / available இல்லை.'});const id=rid();const m={id,name:String(b.name).trim(),gender:b.gender,age:b.age,education:b.edu,category:b.cat,skill:b.skill,address:b.address,nominee:b.nominee,mobile:String(b.mobile).trim(),account:b.account,ifsc:b.ifsc,bank:b.bank,branch:b.branch,referralId:ref,status:'ACTIVE',createdAt:new Date().toISOString()};db.members.push(m);p.status='USED';p.usedBy=id;p.assignedTo=p.assignedTo||null;save();res.json({ok:true,member:m,referralLink:'/member.html?ref='+id})});
-app.get('/api/admin/members',(req,res)=>res.json({members:db.members,pending:db.pending}));
-app.post('/api/admin/pins/generate',(req,res)=>{const count=Math.max(1,Math.min(500,Number(req.body.count)||1));const assignedTo=req.body.assignedTo||null;const created=[];for(let i=0;i<count;i++){const p={pin:pin(),status:'AVAILABLE',assignedTo,usedBy:null,createdAt:new Date().toISOString()};db.pins.push(p);created.push(p)}save();res.json({created,stats:{generated:db.pins.length,used:db.pins.filter(x=>x.status==='USED').length,available:db.pins.filter(x=>x.status==='AVAILABLE').length}})});
-app.get('/api/admin/pins',(req,res)=>res.json({pins:db.pins,stats:{generated:db.pins.length,used:db.pins.filter(x=>x.status==='USED').length,available:db.pins.filter(x=>x.status==='AVAILABLE').length}}));
-app.post('/api/admin/messages',(req,res)=>{const text=String(req.body.text||'').trim();const to=req.body.to||'ALL';if(!text)return res.status(400).json({error:'Message எழுதவும்.'});const msg={id:Date.now(),to,text,createdAt:new Date().toISOString()};db.messages.push(msg);save();res.json({ok:true,message:msg})});
-app.post('/api/admin/review',(req,res)=>{const {memberId,action}=req.body;const m=db.members.find(x=>x.id===memberId);if(!m)return res.status(404).json({error:'Member not found'});if(!['VERIFY','REJECT'].includes(action))return res.status(400).json({error:'Invalid action'});m.status=action==='VERIFY'?'VERIFIED':'REJECTED';save();res.json({ok:true,member:m})});
-app.get('/api/admin/tree',(req,res)=>res.json({members:db.members}));
-app.listen(PORT,()=>console.log(`BORNTOWIN5 running on port ${PORT}`));
+
+app.post('/api/admin/login',(req,res)=>{if(req.body.password!==db.adminPassword)return res.status(401).json({error:'Incorrect password'});res.json({ok:true})});
+app.post('/api/admin/password',(req,res)=>{if(req.body.oldPassword!==db.adminPassword)return res.status(401).json({error:'Current password is incorrect'});db.adminPassword=String(req.body.newPassword||'');save(db);res.json({ok:true})});
+app.get('/api/admin/dashboard',(req,res)=>{
+ const total=db.members.length,pending=db.members.filter(m=>m.status==='Pending').length,verified=db.members.filter(m=>m.status==='Verified').length;
+ const report=db.members.map(m=>{const w=wallet(m.memberId);return {name:m.name,memberId:m.memberId,received:w.received,used:w.used,available:w.available}});
+ res.json({total,pending,verified,members:db.members.map(memberPublic),pinReport:report});
+});
+app.get('/api/admin/members',(req,res)=>res.json({members:findMember(req.query.q).map(memberPublic)}));
+app.post('/api/admin/member-status',(req,res)=>{const m=db.members.find(x=>x.memberId===req.body.memberId);if(!m)return res.status(404).json({error:'Member not found'});m.status=req.body.status;save(db);res.json({ok:true,member:memberPublic(m)})});
+app.post('/api/admin/message',(req,res)=>{if(req.body.to==='all'){db.messages.push({to:'ALL',message:req.body.message,at:new Date().toISOString()})}else{if(!db.members.some(m=>m.memberId===req.body.memberId))return res.status(404).json({error:'Member not found'});db.messages.push({to:req.body.memberId,message:req.body.message,at:new Date().toISOString()})}save(db);res.json({ok:true})});
+app.post('/api/admin/pins/generate',(req,res)=>{
+ const m=db.members.find(x=>x.memberId===req.body.memberId);if(!m)return res.status(404).json({error:'Member not found'});
+ const n=Math.min(500,Math.max(1,Number(req.body.quantity)||1)),out=[];
+ for(let i=0;i<n;i++){let p=pin();while(db.pins.some(x=>x.pin===p))p=pin();const row={pin:p,assignedTo:m.memberId,status:'AVAILABLE',usedBy:null,createdAt:new Date().toISOString()};db.pins.push(row);out.push(row)}
+ save(db);const w=wallet(m.memberId);res.json({pins:out,member:memberPublic(m),available:w.available,used:w.used});
+});
+
+app.post('/api/member/send-otp',(req,res)=>{if(!/^\d{10}$/.test(String(req.body.mobile||'')))return res.status(400).json({error:'Invalid mobile number'});res.json({ok:true,otp:'123456'})});
+app.post('/api/member/login',(req,res)=>{const m=db.members.find(x=>x.mobile===req.body.mobile);if(req.body.otp!=='123456')return res.status(401).json({error:'OTP சரியாக இல்லை'});if(!m)return res.status(404).json({error:'Member not found. Please register first.'});res.json({member:memberPublic(m)})});
+app.post('/api/member/check-pin',(req,res)=>{const p=String(req.body.pin||'').toUpperCase();if(!db.pins.some(x=>x.pin===p&&x.status==='AVAILABLE'))return res.status(400).json({error:'Invalid or unavailable Joining PIN'});res.json({ok:true})});
+app.post('/api/member/register',(req,res)=>{
+ const b=req.body;
+ if(db.members.some(m=>m.mobile===b.mobile))return res.status(409).json({error:'Mobile number already registered'});
+ const p=String(b.pin||'').toUpperCase(),pr=db.pins.find(x=>x.pin===p&&x.status==='AVAILABLE');
+ if(!pr)return res.status(400).json({error:'Invalid or unavailable Joining PIN'});
+ if(b.referral!=='FIRST MEMBER'&&!db.members.some(m=>m.memberId===b.referral))return res.status(400).json({error:'Invalid Referral ID'});
+ const m={...b,memberId:id(),status:'Pending',registeredAt:new Date().toISOString()};
+ delete m.pin;db.members.push(m);pr.status='USED';pr.usedBy=m.memberId;pr.usedAt=new Date().toISOString();save(db);res.json({member:memberPublic(m)});
+});
+app.get('/api/member/dashboard/:id',(req,res)=>{
+ const m=db.members.find(x=>x.memberId===req.params.id);if(!m)return res.status(404).json({error:'Member not found'});
+ const lv=descendants(m.memberId),w=wallet(m.memberId);
+ const levels={};for(let i=1;i<=7;i++)levels[i]=lv[i].map(memberPublic);
+ res.json({member:memberPublic(m),levels,tree:tree(m.memberId),wallet:w});
+});
+app.get('/api/member/level/:id/:level',(req,res)=>{
+ const m=db.members.find(x=>x.memberId===req.params.id),l=Number(req.params.level);if(!m||l<1||l>7)return res.status(404).json({error:'Not found'});
+ const lv=descendants(m.memberId);res.json({members:lv[l].map(memberPublic)});
+});
+app.post('/api/member/use-pin',(req,res)=>{
+ const p=db.pins.find(x=>x.assignedTo===req.body.memberId&&x.status==='AVAILABLE');if(!p)return res.status(400).json({error:'No available PIN'});
+ p.status='USED';p.usedBy=req.body.memberId;p.usedAt=new Date().toISOString();save(db);res.json({wallet:wallet(req.body.memberId)});
+});
+const PORT=process.env.PORT||10000;
+app.listen(PORT,'0.0.0.0',()=>console.log('BORNTOWIN5 running on '+PORT));

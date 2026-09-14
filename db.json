@@ -1,0 +1,14 @@
+{
+  "adminPassword": "ADMIN",
+  "members": [],
+  "pins": [
+    {
+      "pin": "B5-FMUXNF",
+      "assignedTo": null,
+      "status": "AVAILABLE",
+      "usedBy": null,
+      "createdAt": "initial"
+    }
+  ],
+  "messages": []
+}

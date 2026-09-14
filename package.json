@@ -1,10 +1,11 @@
 {
-  "name": "borntowin5-dynamic",
+  "name": "borntowin5",
   "version": "1.0.0",
   "private": true,
-  "description": "BORNTOWIN5 dynamic test website",
-  "main": "server.js",
-  "scripts": {"start":"node server.js","dev":"node server.js"},
-  "engines": {"node": ">=18"},
-  "dependencies": {"express":"^5.1.0"}
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
