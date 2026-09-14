@@ -136,6 +136,10 @@ button{border:0;border-radius:10px;padding:11px 14px;background:#8b1e3f;color:wh
   <div class="pinbox" id="walletPins"></div>
   <button onclick="useWalletPin()" style="width:100%;margin-top:10px">Use 1 PIN → Activate Member</button>
   <div id="walletAct" class="success" style="display:none"></div>
+  <div id="usedPinsSection" style="margin-top:12px;display:none">
+    <h4 style="margin:0 0 7px">Used PINs — Activated Members</h4>
+    <div class="pinbox" id="usedPins"></div>
+  </div>
 </section>
 </main>
 
@@ -161,21 +165,6 @@ return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</
 }
 
 
-let walletAvail=0, walletUsed=0;
-function drawWalletPins(){
-  const arr=[];
-  const el=document.getElementById('walletPins');
-  if(el) el.innerHTML=arr.map((x,i)=>`<div class="pin"><b>${x}</b><small>${i<walletUsed?'USED':'AVAILABLE'}</small></div>`).join('');
-}
-function drawWalletPins(){
-  const el=document.getElementById('walletPins');
-  if(!el)return;
-  el.innerHTML='';
-}
-
-
-}
-drawWalletPins();
 </script>
 
 <script>
@@ -222,9 +211,15 @@ async function b5Register(){
  const d={name:document.getElementById('rName').value.trim(),gender:document.getElementById('rGender').value,age:document.getElementById('rAge').value,education:document.getElementById('rEducation').value.trim(),category:document.getElementById('rCategory').value.trim(),skill:document.getElementById('rSkill').value.trim(),address:document.getElementById('rAddress').value.trim(),nominee:document.getElementById('rNominee').value.trim(),mobile:document.getElementById('rMobile').value.trim(),referral:document.getElementById('rReferral').value.trim(),account:document.getElementById('rAccount').value.trim(),ifsc:document.getElementById('rIfsc').value.trim(),bank:document.getElementById('rBank').value.trim(),branch:document.getElementById('rBranch').value.trim(),pin:document.getElementById('b5JoinPin').value.trim().toUpperCase()};
  try{
   const r=await b5mapi('/api/member/register',{method:'POST',body:JSON.stringify(d)});
-  localStorage.setItem('BORNTOWIN5_MEMBER_ID',r.member.memberId); b5FillMember(r.member); b5ShowReferral(r.member.memberId);
-  document.getElementById('b5RegMsg').className='b5-msg b5-ok';document.getElementById('b5RegMsg').textContent='✓ Registration completed. Member ID: '+r.member.memberId;
-  await b5RefreshMember();
+  localStorage.removeItem('BORNTOWIN5_MEMBER_ID');
+  document.getElementById('b5RegMsg').className='b5-msg b5-ok';
+  document.getElementById('b5RegMsg').textContent='✓ Registration completed. Member ID: '+r.member.memberId;
+  document.getElementById('b5LoginMobile').value=d.mobile;
+  document.getElementById('b5LoginOtp').value='';
+  document.getElementById('b5LoginMsg').className='b5-msg b5-ok';
+  document.getElementById('b5LoginMsg').textContent='Registration completed. OTP பெற்று Login செய்யுங்கள்.';
+  b5Tab('login');
+  document.getElementById('B5_MEMBER_GATE').style.display='block';
  }catch(e){document.getElementById('b5RegMsg').className='b5-msg b5-err';document.getElementById('b5RegMsg').textContent=e.message}
 }
 async function b5RefreshMember(){
@@ -241,7 +236,12 @@ async function b5RefreshMember(){
   document.getElementById('walletUsed').textContent=walletUsed;
   document.getElementById('walletAvailable').textContent=walletAvail;
   document.getElementById('walletBar').style.width=(d.wallet.received?walletAvail/d.wallet.received*100:0)+'%';
-  document.getElementById('walletPins').innerHTML=(d.wallet.pins||[]).filter(x=>String(x.status||'').toUpperCase()==='AVAILABLE').map(x=>`<div class="pin"><b>${x.pin}</b><small>AVAILABLE</small><button style="margin-top:6px;padding:7px 9px;font-size:10px" onclick="sharePin('${x.pin}')">Share</button></div>`).join('');
+  const pins=d.wallet.pins||[];
+  const availablePins=pins.filter(x=>String(x.status||'').toUpperCase()==='AVAILABLE');
+  const usedPins=pins.filter(x=>String(x.status||'').toUpperCase()==='USED');
+  document.getElementById('walletPins').innerHTML=availablePins.map(x=>`<div class="pin"><b>${x.pin}</b><small>AVAILABLE</small><button style="margin-top:6px;padding:7px 9px;font-size:10px" onclick="sharePin('${x.pin}')">Share</button></div>`).join('')||'<div class="small">Available PIN இல்லை.</div>';
+  const usedSec=document.getElementById('usedPinsSection'), usedEl=document.getElementById('usedPins');
+  if(usedSec&&usedEl){usedSec.style.display=usedPins.length?'block':'none';usedEl.innerHTML=usedPins.map(x=>`<div class="pin"><b>${x.pin}</b><small>USED / ACTIVATED</small></div>`).join('');}
   try{const md=await b5mapi('/api/member/messages/'+encodeURIComponent(id));document.getElementById('adminMessages').innerHTML=(md.messages||[]).map(x=>'<div class="activity"><span>'+String(x.message).replace(/</g,'&lt;')+'</span><small>'+new Date(x.at).toLocaleString()+'</small></div>').join('')||'No messages.';}catch(e){}
  }catch(e){}
 }

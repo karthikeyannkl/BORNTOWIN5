@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#8b1e3f">
+<title>BORNTOWIN5 — Admin </title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif}.demo{background:#171c2b;color:#fff;text-align:center;padding:7px;font-size:11px}.top{height:64px;background:#fff;border-bottom:1px solid #e5e8ef;display:flex;align-items:center;gap:10px;padding:0 14px;position:sticky;top:0;z-index:5}.logo{width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:23px;font-weight:800}.brand b{display:block;font-size:15px}.brand small{display:block;color:#7b8496;font-size:10px}.wrap{max-width:760px;margin:auto;padding:15px 12px 35px}.card{background:#fff;border:1px solid #e3e7ef;border-radius:18px;padding:16px;margin-bottom:13px;box-shadow:0 5px 20px #00000008}.hero{background:linear-gradient(135deg,#681733,#a82d53);color:#fff;border-radius:19px;padding:22px 18px;margin-bottom:13px}.hero h1{margin:9px 0 4px;font-size:29px}.hero p{margin:0;color:#f8e9ed;font-size:12px}.pill{display:inline-block;background:#eee1e6;color:#8b1e3f;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800}.whitepill{background:#fff2;color:#fff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;border:1px solid #e5e8ef;border-radius:13px;padding:10px}.stat b{display:block;font-size:23px;color:#8b1e3f}.stat span{font-size:10px;color:#788196}.nav{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.nav button,.btn{border:0;border-radius:10px;padding:11px;font-weight:750;cursor:pointer;font-size:12px}.nav button{background:#f0f1f6;color:#30384d}.nav button.active{background:#8b1e3f;color:#fff}.search{display:flex;gap:8px}.search input,.search select,input,textarea,select{width:100%;padding:11px;border:1px solid #dfe3ec;border-radius:10px;font:inherit;background:#fff}.member{border:1px solid #e4e8ef;border-radius:13px;padding:12px;margin-top:9px}.mh{display:flex;justify-content:space-between;gap:8px}.member b{display:block}.small{font-size:10px;color:#7b8496}.status{padding:4px 7px;border-radius:999px;font-size:9px}.pending{background:#fff0c2;color:#806000}.verified,.approved{background:#e1f4e7;color:#227442}.rejected{background:#fde5e5;color:#ae2929}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.actions button{border:0;border-radius:9px;padding:9px;font-weight:750}.v{background:#e1f4e7;color:#227442}.p{background:#fff0c2;color:#806000}.r{background:#fde5e5;color:#ae2929}.msgbox{background:#fff8fb;border-left:4px solid #8b1e3f;padding:12px;border-radius:10px}.pinbox{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pin{border:1px solid #e4e8ef;border-radius:10px;padding:10px}.pin b{display:block;color:#8b1e3f}.send{background:#8b1e3f;color:#fff;width:100%;margin-top:10px}.tree{border-top:1px solid #eee;margin-top:8px;padding-top:8px}.node{background:#fafbfe;border:1px solid #e4e8ef;border-radius:9px;padding:8px;margin:6px 0;font-size:11px}.children{margin-left:14px;border-left:2px solid #eee1e6;padding-left:9px}.hidden{display:none}@media(max-width:480px){.actions{grid-template-columns:1fr}.pinbox{grid-template-columns:1fr}}
+
+*{box-sizing:border-box}body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif}.demo{background:#171c2b;color:#fff;text-align:center;padding:7px;font-size:11px}.top{height:64px;background:#fff;border-bottom:1px solid #e6e9ef;display:flex;align-items:center;padding:0 14px;gap:10px;position:sticky;top:0;z-index:4}.logo{width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:23px;font-weight:800}.brand b{display:block;font-size:15px}.brand small{display:block;color:#7b8496;font-size:10px}.wrap{max-width:760px;margin:auto;padding:15px 12px 35px}.card{background:#fff;border:1px solid #e3e7ef;border-radius:18px;padding:16px;margin-bottom:13px;box-shadow:0 5px 20px #00000008}.nav{display:grid;grid-template-columns:1fr 1fr;gap:8px}.nav button,.btn{border:0;border-radius:10px;padding:11px;font-weight:750;cursor:pointer;font-size:12px}.nav button{background:#f0f1f6;color:#30384d}.nav button.active{background:#8b1e3f;color:#fff}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;border:1px solid #e5e8ef;border-radius:13px;padding:11px}.stat b{display:block;font-size:24px;color:#8b1e3f}.stat span{font-size:10px;color:#788196}.stat small{display:block;font-size:9px;color:#a06b7e;margin-top:2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.box{border:1px solid #e4e8ef;border-radius:12px;padding:11px;background:#fafbfe}.box b{display:block}.box small{font-size:10px;color:#7b8496}.leader{border:1px solid #e4e8ef;border-radius:13px;padding:13px;margin-top:9px}.lh{display:flex;justify-content:space-between;gap:8px}.pill{font-size:9px;padding:5px 7px;border-radius:999px;background:#eee1e6;color:#8b1e3f;font-weight:800}.green{background:#e1f4e7;color:#227442}.pinbox{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.pin{border:1px solid #e4e8ef;border-radius:9px;padding:9px}.pin b{color:#8b1e3f;font-size:12px}.pin small{display:block;color:#788196;font-size:9px}.primary{background:#8b1e3f;color:#fff}.light{background:#f0f1f6;color:#30384d}.full{width:100%;margin-top:9px}.leadercard{border:2px solid #eee1e6}.balance{font-size:30px;font-weight:800;color:#8b1e3f}.progress{height:9px;background:#e9ebf0;border-radius:99px;overflow:hidden;margin:8px 0}.bar{height:100%;background:#8b1e3f}.activity{display:flex;justify-content:space-between;border-bottom:1px solid #edf0f4;padding:10px 0;font-size:11px}.activity:last-child{border:0}.success{background:#eef7f0;color:#277642;border-radius:10px;padding:10px;font-size:11px;margin-top:10px}@media(max-width:520px){.grid{grid-template-columns:1fr}.pinbox{grid-template-columns:1fr}}
+</style>
+
+<style>
+#B5_ADMIN_GATE{position:fixed;inset:0;background:#f5f7fb;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px}
+#B5_ADMIN_GATE .gate{width:100%;max-width:430px;background:#fff;border:1px solid #e3e7ef;border-radius:20px;padding:22px;box-shadow:0 8px 28px #00000012}
+#B5_ADMIN_GATE .glogo{width:60px;height:60px;border-radius:15px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;margin:0 auto 10px}
+#B5_ADMIN_GATE h2{text-align:center;margin:5px 0}.b5sub{text-align:center;color:#7b8496;font-size:12px}
+#B5_ADMIN_GATE input{width:100%;padding:11px;border:1px solid #dfe3ec;border-radius:10px;font:inherit;margin-top:10px}
+#B5_ADMIN_GATE button{width:100%;border:0;border-radius:10px;padding:11px;background:#8b1e3f;color:#fff;font-weight:800;margin-top:10px}
+#B5_ADMIN_ERR{display:none;color:#ae2929;text-align:center;font-size:11px;margin-top:8px}
+#B5_ADMIN_HINT{display:none;color:#227442;text-align:center;font-size:11px;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="B5_ADMIN_GATE">
+  <div class="gate">
+    <div class="glogo">B5</div>
+    <h2>BORNTOWIN5 Admin</h2>
+    <div class="b5sub">Admin Login</div>
+    <input id="B5_ADMIN_PASSWORD" type="password" placeholder="Enter Admin Password" autocomplete="off">
+    <button onclick="b5AdminLogin()">Login</button>
+    <button onclick="b5ShowChange()" style="background:#f0f1f6;color:#30384d">Change Password</button>
+    <div id="B5_ADMIN_ERR">Incorrect password</div>
+    <div id="B5_ADMIN_HINT"></div>
+    <div id="B5_CHANGE" style="display:none">
+      <input id="B5_OLD_PASSWORD" type="password" placeholder="Current Password">
+      <input id="B5_NEW_PASSWORD" type="password" placeholder="New Password">
+      <input id="B5_CONFIRM_PASSWORD" type="password" placeholder="Confirm New Password">
+      <button onclick="b5ChangePassword()">Save New Password</button>
+    </div>
+  </div>
+</div>
+
+
+<header class="top"><div class="logo">B5</div><div class="brand"><b>BORNTOWIN5 Admin</b><small>Control Center</small></div><button onclick="b5AdminLogout()" style="margin-left:auto;border:0;border-radius:10px;padding:9px 11px;background:#f0f1f6;color:#30384d;font-weight:750">Logout</button></header>
+<main class="wrap">
+<section class="hero"><span class="pill whitepill">ADMIN CONTROL PANEL</span><h1>Welcome, Admin</h1><p>Registration • Members • Messages • PIN • Referral Tree</p></section>
+
+<div class="card">
+<div class="stats">
+<div class="stat"><b id="total">0</b><span>Total Members</span></div>
+</div>
+</div>
+
+<div class="card">
+<div class="nav">
+<button id="b-review" class="active" onclick="tab('review')">📝 Registrations</button>
+<button id="b-members" onclick="tab('members')">👥 Members</button>
+<button id="b-msg" onclick="tab('msg')">📢 Messages</button>
+<button id="b-pin" onclick="tab('pin')">🔐 PIN Management</button>
+<button id="b-pinreport" onclick="tab('pinreport')">📊 Admin PIN Report</button>
+<button id="b-tree" onclick="tab('tree')">🌳 Referral Tree</button>
+<button id="b-settings" onclick="tab('settings')">⚙️ Settings</button>
+</div>
+</div>
+
+<section id="review" class="card panel">
+<span class="pill">REGISTRATION REVIEW</span><h3>New Registrations</h3>
+<div class="search"><input id="rq" placeholder="Mobile / Name / Member ID"></div>
+<div id="reviewList"></div>
+</section>
+
+<section id="members" class="card panel hidden">
+<span class="pill">MEMBERS</span><h3>Member Search</h3>
+<div class="search"><input id="mq" placeholder="Mobile Number / Member ID / Name"><button class="btn send" style="width:auto;margin:0" onclick="memberSearch()">Search</button></div>
+<div id="memberList"></div>
+</section>
+
+<section id="msg" class="card panel hidden">
+<span class="pill">MESSAGE CENTER</span><h3>Send Message</h3>
+<label class="small">Send To</label><select id="msgTo" onchange="toggleMobileSearch(this.value)"><option value="all">👥 All Members</option><option value="mobile">📱 Mobile Number</option></select>
+<div id="mobileSearch" class="hidden" style="margin-top:9px"><input id="targetMobile" type="tel" inputmode="numeric" maxlength="10" minlength="10" pattern="[0-9]{10}" placeholder="10 digit Mobile Number"><button type="button" class="btn send" onclick="findTarget()">🔎 Search Member</button><div id="target"></div></div>
+<textarea id="message" rows="5" placeholder="Message எழுதுங்கள்..." style="margin-top:10px"></textarea>
+<button class="btn send" onclick="sendMessage()">Send Message</button><div id="msgResult"></div>
+</section>
+
+<section id="pin" class="card panel hidden">
+<span class="pill">PIN MANAGEMENT</span><h3>Generate & Assign Joining PINs</h3>
+<label class="small">Leader</label><select id="leader"><option value="">Select Member / Leader</option></select>
+<label class="small" style="display:block;margin-top:10px">Quantity</label><select id="qty"><option>10</option><option>20</option><option>50</option><option>100</option></select>
+<button class="btn send" onclick="generatePins()">Generate & Assign PINs</button>
+<div id="pinResult"></div>
+</section>
+
+<section id="pinreport" class="card panel hidden">
+<span class="pill">ADMIN PIN REPORT</span>
+<h3>PIN Distribution & Leader Report</h3>
+<div class="card"><h3 style="margin-top:0">PIN Distribution Summary</h3><div class="stats">
+<div class="stat"><b id="totalSent">0</b><span>Total PINs Sent</span><small>All time</small></div>
+<div class="stat"><b>0</b><span>Leaders</span><small>Received PINs</small></div>
+<div class="stat"><b id="used">0</b><span>PINs Used</span><small>Activated</small></div>
+</div></div>
+
+<div class="card"><h3 style="margin-top:0">Daily PIN Distribution</h3><div class="success">இன்னும் PIN distribution data இல்லை.</div></div><div class="card"><h3 style="margin-top:0">Leader-wise PIN Distribution</h3>
+<div id="leaders"></div>
+</div>
+
+<div class="card"><h3 style="margin-top:0">Recent PIN Activity</h3><div class="small">இன்னும் activity இல்லை.</div></div></section>
+
+<section id="tree" class="card panel hidden"><span class="pill">FULL REFERRAL TREE</span><h3>All Members Downline</h3><div id="fullTree"><div class="small">இன்னும் உறுப்பினர்கள் பதிவு செய்யப்படவில்லை.</div></div></section>
+
+<section id="settings" class="card panel hidden">
+<span class="pill">ADMIN SETTINGS</span><h3>System Settings</h3>
+<div class="msgbox"><b> Mode</b><p class="small">Production version-ல் Admin authentication, database, SMS OTP, Drive storage மற்றும் audit log இணைக்கப்படும்.</p></div>
+<button class="btn send" onclick="alert(' settings saved')">Save Settings</button>
+</section>
+</main>
+
+<script>
+const B5_DEFAULT_ADMIN_PASSWORD='ADMIN';
+function b5GetAdminPassword(){return localStorage.getItem('BORNTOWIN5_ADMIN_PASSWORD')||B5_DEFAULT_ADMIN_PASSWORD}
+function b5AdminLogin(){
+  const p=document.getElementById('B5_ADMIN_PASSWORD').value;
+  const e=document.getElementById('B5_ADMIN_ERR');
+  if(p===b5GetAdminPassword()){
+    document.getElementById('B5_ADMIN_GATE').style.display='none';
+  }else{
+    e.textContent='Incorrect password'; e.style.display='block';
+  }
+}
+function b5ShowChange(){
+  document.getElementById('B5_CHANGE').style.display='block';
+  document.getElementById('B5_ADMIN_ERR').style.display='none';
+}
+function b5ChangePassword(){
+  const oldp=document.getElementById('B5_OLD_PASSWORD').value;
+  const np=document.getElementById('B5_NEW_PASSWORD').value;
+  const cp=document.getElementById('B5_CONFIRM_PASSWORD').value;
+  const e=document.getElementById('B5_ADMIN_ERR'), h=document.getElementById('B5_ADMIN_HINT');
+  if(oldp!==b5GetAdminPassword()){e.textContent='Current password is incorrect';e.style.display='block';return}
+  if(np.length<4){e.textContent='New password must be at least 4 characters';e.style.display='block';return}
+  if(np!==cp){e.textContent='New passwords do not match';e.style.display='block';return}
+  localStorage.setItem('BORNTOWIN5_ADMIN_PASSWORD',np);
+  h.textContent='✓ Password changed successfully';h.style.display='block';e.style.display='none';
+  document.getElementById('B5_CHANGE').style.display='none';
+}
+document.getElementById('B5_ADMIN_PASSWORD').addEventListener('keydown',e=>{if(e.key==='Enter')b5AdminLogin()});
+function b5AdminLogout(){document.getElementById('B5_ADMIN_GATE').style.display='flex';document.getElementById('B5_ADMIN_PASSWORD').value='';}
+</script>
+
+<script>
+async function api(url, options={}){
+  const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||'Request failed');
+  return d;
+}
+async function b5AdminLogin(){
+  const p=document.getElementById('B5_ADMIN_PASSWORD').value;
+  try{
+    await api('/api/admin/login',{method:'POST',body:JSON.stringify({password:p})});
+    document.getElementById('B5_ADMIN_GATE').style.display='none';
+    await loadAdminData();
+  }catch(e){
+    const x=document.getElementById('B5_ADMIN_ERR');x.textContent=e.message;x.style.display='block';
+  }
+}
+async function b5ChangePassword(){
+  const oldp=document.getElementById('B5_OLD_PASSWORD').value;
+  const np=document.getElementById('B5_NEW_PASSWORD').value;
+  const cp=document.getElementById('B5_CONFIRM_PASSWORD').value;
+  const e=document.getElementById('B5_ADMIN_ERR'),h=document.getElementById('B5_ADMIN_HINT');
+  if(np!==cp){e.textContent='New passwords do not match';e.style.display='block';return}
+  try{
+    await api('/api/admin/password',{method:'POST',body:JSON.stringify({oldPassword:oldp,newPassword:np})});
+    h.textContent='✓ Password changed successfully';h.style.display='block';e.style.display='none';
+    document.getElementById('B5_CHANGE').style.display='none';
+  }catch(err){e.textContent=err.message;e.style.display='block'}
+}
+async function loadAdminData(){
+  try{
+    const d=await api('/api/admin/dashboard');
+    document.getElementById('total').textContent=d.total;
+    const sel=document.getElementById('leader');
+    if(sel){
+      sel.innerHTML='<option value="">Select Member / Leader</option>'+
+        d.members.map(m=>`<option value="${m.memberId}">${m.name} — ${m.memberId}</option>`).join('');
+    }
+    window.__b5AdminMembers=d.members;
+    drawDynamicReview(d.members);
+    renderDynamicPinReport(d.pinReport);
+  }catch(e){}
+}
+function drawDynamicReview(list){
+  const q=(document.getElementById('rq')?.value||'').toLowerCase();
+  const f=document.getElementById('rf')?.value||'All';
+  const a=list.filter(m=>(m.name+m.mobile+m.memberId).toLowerCase().includes(q)&&(f==='All'||m.status===f));
+  document.getElementById('reviewList').innerHTML=a.map(m=>`<div class="member">
+    <div class="mh"><div><b>${m.name}</b><span class="small">${m.memberId} • ${m.mobile}</span></div>
+    </div>
+    <div class="small" style="margin-top:8px">Referral: ${m.referral||'FIRST MEMBER'}<br>Bank/IFSC: ✓ Submitted</div>
+    </div>`).join('')||'<p class="small">No registrations found.</p>';
+}
+async function dynamicStatus(id,status){
+  try{await api('/api/admin/member-status',{method:'POST',body:JSON.stringify({memberId:id,status})});await loadAdminData()}catch(e){alert(e.message)}
+}
+async function memberSearch(){
+  const q=document.getElementById('mq').value.trim();
+  try{
+    const d=await api('/api/admin/members?q='+encodeURIComponent(q));
+    document.getElementById('memberList').innerHTML=d.members.map(m=>`<div class="member"><b>${m.name}</b>
+      <div class="small">${m.memberId}<br>Mobile: ${m.mobile}<br>Referral: ${m.referral||'FIRST MEMBER'}</div><button class="btn send" style="margin-top:8px" onclick="selectMessageMember('${m.memberId}','${m.mobile}')">Select Member</button></div>`).join('')||'<p class="small">Member not found.</p>';
+  }catch(e){alert(e.message)}
+}
+function selectMessageMember(id,mobile){
+  const t=document.getElementById('target'); if(t){t.dataset.memberId=id;t.innerHTML='<div class="member"><b>✓ Selected Member</b><div class="small">'+id+' • '+mobile+'</div></div>';}
+  const n=document.getElementById('targetMobile'); if(n)n.value=mobile;
+  const s=document.getElementById('msgTo'); if(s)s.value='mobile'; toggleMobileSearch('mobile');
+}
+function toggleMobileSearch(value){
+  const box=document.getElementById('mobileSearch');
+  const target=document.getElementById('target');
+  const input=document.getElementById('targetMobile');
+  if(!box)return;
+  if(value==='mobile'){
+    box.classList.remove('hidden');
+    if(input) input.focus();
+  }else{
+    box.classList.add('hidden');
+    if(target){target.innerHTML='';delete target.dataset.memberId;}
+    if(input) input.value='';
+  }
+}
+
+async function sendMessage(){
+  const to=document.getElementById('msgTo').value;
+  const msg=document.getElementById('message').value.trim();
+  if(!msg){alert('Message எழுதுங்கள்');return}
+  let memberId='';
+  if(to==='mobile'){
+    memberId=document.getElementById('target')?.dataset?.memberId||'';
+    if(!memberId){alert('முதலில் valid Mobile Number search செய்யுங்கள்');return}
+  }
+  try{
+    await api('/api/admin/message',{method:'POST',body:JSON.stringify({memberId,to,message:msg})});
+    document.getElementById('msgResult').innerHTML='<div class="msgbox" style="margin-top:10px">✓ Message sent successfully.</div>';
+    document.getElementById('message').value='';
+  }catch(e){alert(e.message)}
+}
+async function findTarget(){
+  const n=document.getElementById('targetMobile').value.trim();
+  if(!/^\d{10}$/.test(n)){alert('சரியான 10 digit Mobile Number கொடுக்கவும்');return}
+  try{
+    const d=await api('/api/admin/members?q='+encodeURIComponent(n));
+    const m=d.members[0];
+    const el=document.getElementById('target');
+    if(m){el.dataset.memberId=m.memberId;el.innerHTML=`<div class="member"><b>✓ ${m.name}</b><div class="small">${m.memberId} • ${m.mobile}</div></div>`}
+    else{el.innerHTML='<div class="msgbox" style="margin-top:8px">Member not found.</div>'}
+  }catch(e){alert(e.message)}
+}
+async function generatePins(){
+  const n=+document.getElementById('qty').value;
+  const memberId=document.getElementById('leader').value;
+  if(!memberId){alert('Select Member / Leader');return}
+  try{
+    const d=await api('/api/admin/pins/generate',{method:'POST',body:JSON.stringify({memberId,quantity:n})});
+    document.getElementById('pinResult').innerHTML=`<div class="msgbox" style="margin-top:12px"><b>✓ ${d.pins.length} PINs generated & assigned</b>
+      <p class="small">${d.member.name} — ${d.member.memberId}<br>Available: ${d.available} • Used: ${d.used}</p>
+      <details><summary>Show PINs</summary><div class="pinbox" style="margin-top:8px">${d.pins.map(x=>'<div class="pin"><b>'+x.pin+'</b><span class="small">AVAILABLE</span></div>').join('')}</div></details></div>`;
+    await loadAdminData();
+  }catch(e){alert(e.message)}
+}
+async function renderDynamicPinReport(report){
+  const el=document.getElementById('leaders');
+  if(el) el.innerHTML=report.map(x=>`<div class="leader"><div class="lh"><div><b>${x.name}</b><div class="small">${x.memberId}</div></div><span class="pill green">Assigned</span></div>
+    <div class="grid" style="margin-top:9px"><div class="box"><b>${x.received}</b><small>Total Received</small></div>
+    <div class="box"><b>${x.available}</b><small>Available</small></div><div class="box"><b>${x.used}</b><small>Used</small></div>
+    <div class="box"><b>${x.received?Math.round(x.used/x.received*100):0}%</b><small>Activated</small></div></div></div>`).join('')||'<div class="small">இன்னும் PIN data இல்லை.</div>';
+}
+document.getElementById('rq')?.addEventListener('input',()=>drawDynamicReview(window.__b5AdminMembers||[]));
+
+document.getElementById('targetMobile')?.addEventListener('keydown',e=>{if(e.key==='Enter')findTarget()});
+document.getElementById('msgTo')?.addEventListener('change',e=>toggleMobileSearch(e.target.value));
+</script>
+</body></html>
