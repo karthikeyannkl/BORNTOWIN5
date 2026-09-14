@@ -80,7 +80,7 @@
 <section id="msg" class="card panel hidden">
 <span class="pill">MESSAGE CENTER</span><h3>Send Message</h3>
 <label class="small">Send To</label><select id="msgTo" onchange="toggleMobileSearch(this.value)"><option value="all">👥 All Members</option><option value="mobile">📱 Mobile Number</option></select>
-<div id="mobileSearch" class="hidden" style="margin-top:9px"><input id="targetMobile" placeholder="10 digit Mobile Number"><button class="btn send" onclick="findTarget()">Search Member</button><div id="target"></div></div>
+<div id="mobileSearch" class="hidden" style="margin-top:9px"><input id="targetMobile" type="tel" inputmode="numeric" maxlength="10" minlength="10" pattern="[0-9]{10}" placeholder="10 digit Mobile Number"><button type="button" class="btn send" onclick="findTarget()">🔎 Search Member</button><div id="target"></div></div>
 <textarea id="message" rows="5" placeholder="Message எழுதுங்கள்..." style="margin-top:10px"></textarea>
 <button class="btn send" onclick="sendMessage()">Send Message</button><div id="msgResult"></div>
 </section>
@@ -218,6 +218,21 @@ function selectMessageMember(id,mobile){
   const n=document.getElementById('targetMobile'); if(n)n.value=mobile;
   const s=document.getElementById('msgTo'); if(s)s.value='mobile'; toggleMobileSearch('mobile');
 }
+function toggleMobileSearch(value){
+  const box=document.getElementById('mobileSearch');
+  const target=document.getElementById('target');
+  const input=document.getElementById('targetMobile');
+  if(!box)return;
+  if(value==='mobile'){
+    box.classList.remove('hidden');
+    if(input) input.focus();
+  }else{
+    box.classList.add('hidden');
+    if(target){target.innerHTML='';delete target.dataset.memberId;}
+    if(input) input.value='';
+  }
+}
+
 async function sendMessage(){
   const to=document.getElementById('msgTo').value;
   const msg=document.getElementById('message').value.trim();
@@ -235,6 +250,7 @@ async function sendMessage(){
 }
 async function findTarget(){
   const n=document.getElementById('targetMobile').value.trim();
+  if(!/^\d{10}$/.test(n)){alert('சரியான 10 digit Mobile Number கொடுக்கவும்');return}
   try{
     const d=await api('/api/admin/members?q='+encodeURIComponent(n));
     const m=d.members[0];
@@ -263,5 +279,8 @@ async function renderDynamicPinReport(report){
     <div class="box"><b>${x.received?Math.round(x.used/x.received*100):0}%</b><small>Activated</small></div></div></div>`).join('')||'<div class="small">இன்னும் PIN data இல்லை.</div>';
 }
 document.getElementById('rq')?.addEventListener('input',()=>drawDynamicReview(window.__b5AdminMembers||[]));
+
+document.getElementById('targetMobile')?.addEventListener('keydown',e=>{if(e.key==='Enter')findTarget()});
+document.getElementById('msgTo')?.addEventListener('change',e=>toggleMobileSearch(e.target.value));
 </script>
 </body></html>
