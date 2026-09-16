@@ -9,38 +9,38 @@
 body{margin:0;background:#f5f7fb;color:#172033;font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif}
 .demo{background:#171c2b;color:white;text-align:center;padding:7px;font-size:11px}
 header{height:64px;background:white;border-bottom:1px solid #e6e9ef;display:flex;align-items:center;padding:0 14px;gap:10px}
-.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:800}
+.logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#034A2B,#d39a42);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:800}
 .brand b{display:block;font-size:15px}.brand small{color:#7b8496;font-size:10px}
 main{max-width:720px;margin:auto;padding:16px 12px 40px}
 .card{background:#fff;border:1px solid #e4e8ef;border-radius:18px;padding:17px;margin-bottom:14px;box-shadow:0 5px 20px #00000008}
-.profile{display:flex;gap:12px;align-items:center}.avatar{width:55px;height:55px;border-radius:50%;background:#eee1e6;color:#8b1e3f;display:grid;place-items:center;font-size:23px;font-weight:800}
+.profile{display:flex;gap:12px;align-items:center}.avatar{width:55px;height:55px;border-radius:50%;background:#eee1e6;color:#075B35;display:grid;place-items:center;font-size:23px;font-weight:800}
 .profile h2{margin:0 0 3px}.small{font-size:11px;color:#7b8496}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
 .stat{background:#fff;border:1px solid #e4e8ef;border-radius:14px;padding:11px 4px;text-align:center;cursor:pointer}
-.stat:active{transform:scale(.97)}.stat b{display:block;font-size:24px;color:#8b1e3f}.stat span{font-size:10px;color:#737d91}.stat small{display:block;color:#a06b7e;font-size:8px;margin-top:3px}
+.stat:active{transform:scale(.97)}.stat b{display:block;font-size:24px;color:#075B35}.stat span{font-size:10px;color:#737d91}.stat small{display:block;color:#a06b7e;font-size:8px;margin-top:3px}
 .detail{display:none;background:#fff;border:2px solid #eee1e6;border-radius:16px;padding:15px;margin-bottom:14px}
 .member{display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fafbfe;border:1px solid #e4e8ef;border-radius:12px;padding:11px;margin-top:8px}
-.member b{display:block}.member small{display:block;color:#7b8496;font-size:10px}.tag{background:#eee1e6;color:#8b1e3f;padding:5px 7px;border-radius:8px;font-size:9px}
+.member b{display:block}.member small{display:block;color:#7b8496;font-size:10px}.tag{background:#eee1e6;color:#075B35;padding:5px 7px;border-radius:8px;font-size:9px}
 .tree{border-top:1px solid #eee;margin-top:10px;padding-top:10px}.node{padding:9px;background:#fafbfe;border:1px solid #e4e8ef;border-radius:10px;margin:7px 0}.children{margin-left:17px;border-left:2px solid #eee1e6;padding-left:10px}
-button{border:0;border-radius:10px;padding:11px 14px;background:#8b1e3f;color:white;font-weight:700;cursor:pointer}
+button{border:0;border-radius:10px;padding:11px 14px;background:#075B35;color:white;font-weight:700;cursor:pointer}
 @media(max-width:560px){.stats{grid-template-columns:repeat(4,1fr)}}
 
-.leadercard{border:2px solid #eee1e6}.balance{font-size:30px;font-weight:800;color:#8b1e3f}.progress{height:9px;background:#e9ebf0;border-radius:99px;overflow:hidden;margin:8px 0}.bar{height:100%;background:#8b1e3f}.pinbox{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.pin{border:1px solid #e4e8ef;border-radius:9px;padding:9px}.pin b{color:#8b1e3f;font-size:12px}.pin small{display:block;color:#788196;font-size:9px}.success{background:#eef7f0;color:#277642;border-radius:10px;padding:10px;font-size:11px;margin-top:10px}
+.leadercard{border:2px solid #eee1e6}.balance{font-size:30px;font-weight:800;color:#075B35}.progress{height:9px;background:#e9ebf0;border-radius:99px;overflow:hidden;margin:8px 0}.bar{height:100%;background:#075B35}.pinbox{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.pin{border:1px solid #e4e8ef;border-radius:9px;padding:9px}.pin b{color:#075B35;font-size:12px}.pin small{display:block;color:#788196;font-size:9px}.success{background:#eef7f0;color:#277642;border-radius:10px;padding:10px;font-size:11px;margin-top:10px}
 @media(max-width:520px){.pinbox{grid-template-columns:1fr}}
 </style>
 <style>
 .logo img,.gatelogo img{width:100%;height:100%;object-fit:contain;border-radius:inherit;display:block}
 #B5_MEMBER_GATE{position:fixed;inset:0;background:#f5f7fb;z-index:99999;overflow:auto;padding:20px 14px}
 #B5_MEMBER_GATE .gatebox{width:100%;max-width:520px;margin:18px auto;background:#fff;border:1px solid #e3e7ef;border-radius:20px;padding:20px;box-shadow:0 8px 28px #00000012}
-#B5_MEMBER_GATE .gatelogo{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#7e1839,#d39a42);color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;margin:0 auto 10px}
+#B5_MEMBER_GATE .gatelogo{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#034A2B,#d39a42);color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;margin:0 auto 10px}
 #B5_MEMBER_GATE h2{text-align:center;margin:5px 0}.gate-sub{text-align:center;color:#7b8496;font-size:12px}
 .b5-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
 .b5-tabs button{border:0;border-radius:10px;padding:11px;font-weight:800;background:#f0f1f6;color:#30384d}
-.b5-tabs button.on{background:#8b1e3f;color:#fff}
+.b5-tabs button.on{background:#075B35;color:#fff}
 .b5-step{display:none}.b5-step.on{display:block}
 .b5-step label{display:block;font-size:11px;color:#7b8496;margin-top:9px}
 .b5-step input,.b5-step select,.b5-step textarea{width:100%;padding:11px;border:1px solid #dfe3ec;border-radius:10px;font:inherit;background:#fff;margin-top:5px}
-.b5-primary{width:100%;border:0;border-radius:10px;padding:11px;background:#8b1e3f;color:#fff;font-weight:800;margin-top:10px}
+.b5-primary{width:100%;border:0;border-radius:10px;padding:11px;background:#075B35;color:#fff;font-weight:800;margin-top:10px}
 .b5-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .b5-full{grid-column:1/-1}.b5-msg{text-align:center;font-size:11px;margin-top:9px}.b5-err{color:#ae2929}.b5-ok{color:#227442}
 @media(max-width:520px){.b5-grid{grid-template-columns:1fr}}
@@ -52,6 +52,29 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 #B5_MEMBER_GATE h2{font-size:clamp(20px,6vw,28px);white-space:normal;overflow-wrap:anywhere}
 main{width:100%;max-width:720px;box-sizing:border-box}
 .card,.search,input,select,textarea,button{max-width:100%}
+</style>
+
+<style id="b5-logo-theme">
+:root{
+ --b5-green:#075B35;--b5-green-dark:#034A2B;--b5-green-soft:#EAF4EE;
+ --b5-gold:#D9A441;--b5-gold-light:#F5D98A;--b5-cream:#FFFDF7;
+ --b5-ink:#17372C;--b5-border:#DDE7E1;
+}
+body{background:var(--b5-cream)!important;color:var(--b5-ink)!important;overflow-x:hidden}
+header,.head{background:var(--b5-green)!important;color:#fff!important}
+.hero{background:linear-gradient(135deg,var(--b5-green-dark),var(--b5-green),#147A49)!important}
+button,.b5-primary{background:var(--b5-green)!important;color:#fff!important}
+button:hover,.b5-primary:hover{background:var(--b5-green-dark)!important}
+.tag,.pill:not(.whitepill),.section-title,.badge{border-color:var(--b5-gold)!important}
+.whitepill{color:var(--b5-green)!important}
+.card,.gate,.panel,.stat{border-color:var(--b5-border)!important}
+.stat b,.gold,.amount{color:var(--b5-gold)!important}
+input:focus,select:focus,textarea:focus{border-color:var(--b5-gold)!important;outline-color:var(--b5-gold)!important}
+#integratedSidebar,#memberSidebar{background:var(--b5-cream)!important}
+#integratedSidebar button,#memberSidebar button{background:var(--b5-green-soft)!important;color:var(--b5-ink)!important}
+#integratedSidebar button.active,#memberSidebar button.active{background:var(--b5-green)!important;color:#fff!important}
+#integratedMenuBtn,#memberMenuBtn{background:#fff!important;color:var(--b5-green)!important;border:1px solid var(--b5-gold)!important}
+.logo img{object-fit:contain!important;background:#fff!important;border-radius:50%!important}
 </style>
 </head>
 <body><div id="B5_MEMBER_GATE"><div class="gatebox">
@@ -213,7 +236,7 @@ window.addEventListener('load',initMember);
 </script>
 </body>
 </html><style>
-.pin button{border:0;border-radius:8px;padding:6px 9px;background:#8b1e3f;color:#fff;font-weight:700;font-size:11px}
+.pin button{border:0;border-radius:8px;padding:6px 9px;background:#075B35;color:#fff;font-weight:700;font-size:11px}
 </style>
 <script>
 async function b5SharePin(pin){
@@ -231,4 +254,50 @@ function b5RenderWalletPins(pins){
 </script><script>
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localStorage.getItem('BORNTOWIN5_MEMBER_ID')){b5Refresh();b5LoadMessages()}});
 window.addEventListener('online',()=>{if(localStorage.getItem('BORNTOWIN5_MEMBER_ID')){b5Refresh();b5LoadMessages()}});
+</script>
+<style id="unified-member-menu-style">
+#memberMenuBtn,#memberOverlay,#memberSidebar,#memberPortalFrame{display:none!important}
+#unifiedMemberMenuBtn{display:none;position:fixed;top:10px;left:10px;z-index:2147483000;width:46px;height:46px;border:0;border-radius:12px;background:#fff;color:#075B35;font-size:25px;box-shadow:0 3px 14px #0003;cursor:pointer}
+#unifiedMemberMenuBtn.ready{display:block}
+#unifiedMemberOverlay{display:none;position:fixed;inset:0;background:#0007;z-index:2147482998}
+#unifiedMemberOverlay.show{display:block}
+#unifiedMemberSidebar{display:none;position:fixed;top:0;left:-300px;width:286px;max-width:88vw;height:100vh;background:#fff;z-index:2147482999;box-shadow:4px 0 20px #0004;transition:left .25s ease;padding:72px 14px 20px;overflow:auto}
+#unifiedMemberSidebar.ready{display:block}
+#unifiedMemberSidebar.open{left:0}
+#unifiedMemberSidebar .ustitle{font-size:12px;color:#667085;padding:0 10px 7px;font-weight:800;text-transform:uppercase}
+#unifiedMemberSidebar .uitem{width:100%;text-align:left;background:#f4f5f8;color:#273043;border:0;padding:13px 14px;margin:5px 0;border-radius:10px;font-weight:750;cursor:pointer;font-size:14px}
+#unifiedMemberSidebar .uitem.active{background:#075B35;color:#fff}
+#unifiedMemberFrame{display:none;position:fixed;inset:0;width:100%;height:100%;border:0;z-index:2147482997;background:#fff}
+#unifiedMemberFrame.show{display:block}
+@media(max-width:520px){#unifiedMemberMenuBtn{top:9px;left:9px}.top{padding-left:66px}}
+</style>
+<button id="unifiedMemberMenuBtn" onclick="uMemberToggle()" aria-label="Open Member menu">☰</button>
+<div id="unifiedMemberOverlay" onclick="uMemberToggle()"></div>
+<aside id="unifiedMemberSidebar">
+  <div class="ustitle">Member Menu</div>
+  <button class="uitem active" onclick="uMemberMain('dashboard',this)">🏠 Dashboard</button>
+  <button class="uitem" onclick="uMemberMain('membership',this)">👤 My Membership</button>
+  <button class="uitem" onclick="uMemberMain('invite',this)">🤝 Share & Invite</button>
+  <button class="uitem" onclick="uMemberMain('downline',this)">🌳 My Downline</button>
+  <button class="uitem" onclick="uMemberMain('levels',this)">📊 My Levels</button>
+  <button class="uitem" onclick="uMemberMain('messages',this)">📢 My Messages</button>
+  <button class="uitem" onclick="uMemberMain('pinwallet',this)">🔐 My PIN Wallet</button>
+  <div class="ustitle" style="margin-top:12px">Level Tracking</div>
+  <button class="uitem" onclick="uMemberLevelTrack(this)">🔗 LevelTrack Member Portal</button>
+</aside>
+<iframe id="unifiedMemberFrame" title="LevelTrack Member Portal"></iframe>
+<script id="unified-member-menu-script">
+(function(){
+ const btn=document.getElementById('unifiedMemberMenuBtn'),side=document.getElementById('unifiedMemberSidebar'),ov=document.getElementById('unifiedMemberOverlay'),frame=document.getElementById('unifiedMemberFrame');
+ function logged(){const g=document.getElementById('B5_MEMBER_GATE');return !!localStorage.getItem('BORNTOWIN5_MEMBER_ID') && g && getComputedStyle(g).display==='none'}
+ function ready(){const ok=logged();[btn,side].forEach(x=>x&&x.classList.toggle('ready',ok));if(!ok){frame.classList.remove('show');side.classList.remove('open');ov.classList.remove('show');}}
+ window.uMemberToggle=function(){if(!btn.classList.contains('ready'))return;side.classList.toggle('open');ov.classList.toggle('show')}
+ function close(){side.classList.remove('open');ov.classList.remove('show')}
+ window.uMemberMain=function(id,b){frame.classList.remove('show');document.querySelectorAll('#unifiedMemberSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();
+   const map={dashboard:null,membership:'referralCard',invite:'referralCard',downline:'tree',levels:'detail',messages:'memberMessages',pinwallet:'leaderWallet'};
+   const target=map[id]; if(target){document.getElementById(target)?.scrollIntoView({behavior:'smooth',block:'start'});}else window.scrollTo({top:0,behavior:'smooth'});
+ }
+ window.uMemberLevelTrack=function(b){document.querySelectorAll('#unifiedMemberSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();frame.classList.add('show');}
+ frame.src='/leveltrack-member.html'; ready();setInterval(ready,500);
+})();
 </script>
