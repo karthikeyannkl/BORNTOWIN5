@@ -84,7 +84,7 @@ main{width:100%;max-width:720px;box-sizing:border-box}
 <div><label>Bank Name</label><input id="rBank"></div>
 <div><label>Branch</label><input id="rBranch"></div>
 <div class="b5-full"><label>Declaration</label><label style="color:#172033"><input id="rDeclaration" type="checkbox" style="width:auto;margin-right:6px"> I confirm that the details provided are correct.</label></div>
-<div class="b5-full"><label>Joining PIN</label><input id="b5JoinPin" maxlength="9" placeholder="Enter Joining PIN"></div>
+<div class="b5-full"><label>Joining PIN</label><input id="b5JoinPin" maxlength="9" placeholder="Enter Joining PIN"><div style="font-size:12px;color:#667085;margin-top:5px">First Registration PIN: <b>B5-FMUXNF</b></div></div>
 </div>
 <button class="b5-primary" onclick="b5Register()">Submit Registration</button>
 <div id="b5RegMsg" class="b5-msg"></div>
@@ -202,7 +202,7 @@ window.addEventListener('load',initMember);
 <script>
 (function(){
  const btn=document.getElementById('memberMenuBtn'),side=document.getElementById('memberSidebar'),ov=document.getElementById('memberOverlay'),frame=document.getElementById('memberPortalFrame');
- function ready(){const g=document.getElementById('B5_MEMBER_GATE');const logged=!!g&&getComputedStyle(g).display==='none';[btn,side,ov].forEach(x=>x&&x.classList.toggle('ready',logged));if(!logged){frame.classList.remove('show');side.classList.remove('open');ov.classList.remove('show');}}
+ function ready(){const g=document.getElementById('B5_MEMBER_GATE');const logged=!!localStorage.getItem('BORNTOWIN5_MEMBER_ID') && !!g && getComputedStyle(g).display==='none';[btn,side,ov].forEach(x=>x&&x.classList.toggle('ready',logged));if(!logged){frame.classList.remove('show');side.classList.remove('open');ov.classList.remove('show');}}
  window.memberToggleMenu=function(){if(!btn.classList.contains('ready'))return;side.classList.toggle('open');ov.classList.toggle('show');}
  function close(){side.classList.remove('open');ov.classList.remove('show')}
  window.memberShowOriginal=function(b){frame.classList.remove('show');document.querySelectorAll('#memberSidebar button').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();window.scrollTo({top:0,behavior:'smooth'});}

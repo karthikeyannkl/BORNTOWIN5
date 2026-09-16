@@ -188,8 +188,10 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 (function(){
  const btn=document.getElementById('integratedMenuBtn'), side=document.getElementById('integratedSidebar'), ov=document.getElementById('integratedOverlay');
  function setReady(v){[btn,side,ov].forEach(x=>{if(x)x.classList.toggle('ready',!!v)});}
- setReady(false);
- window.addEventListener('message',function(e){if(e&&e.data&&e.data.type==='B5_AUTH_STATE') setReady(!!e.data.loggedIn);});
+ function auth(){return localStorage.getItem('B5_ADMIN_LOGIN')==='1' && document.getElementById('B5_ADMIN_GATE')?.style.display!=='flex';}
+ setReady(auth());
+ window.addEventListener('storage',()=>setReady(auth()));
+ setInterval(()=>setReady(auth()),300);
 })();
 </script>
 <script id="integrated-side-menu-script">

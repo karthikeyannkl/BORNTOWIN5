@@ -1,7 +1,7 @@
 {
-  "name":"borntowin5",
-  "version":"1.0.0",
-  "private":true,
-  "scripts":{"start":"node server.js"},
-  "dependencies":{"express":"^4.21.2"}
+  "name": "borntowin5-leveltrack",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {"start": "node server.js"},
+  "dependencies": {"express": "^4.21.2"}
 }

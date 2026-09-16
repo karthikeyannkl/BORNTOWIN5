@@ -1,26 +1,30 @@
-BORNTOWIN5 + LEVELTRACK SERVER DYNAMIC PACKAGE
+BORNTOWIN5 + LEVELTRACK DYNAMIC SERVER V2
 
 Files:
-- admin.html              BORNTOWIN5 Admin + LevelTrack Admin menu
-- member.html             BORNTOWIN5 Member + LevelTrack Member menu
-- leveltrack-admin.html   Server-connected LevelTrack Admin Portal
-- leveltrack-member.html  Server-connected LevelTrack Member Portal
-- server.js               BORNTOWIN5 + LevelTrack API/backend
-- package.json             Express dependency
+- admin.html
+- member.html
+- leveltrack-admin.html
+- leveltrack-member.html
+- server.js
+- package.json
 
-IMPORTANT:
-1. Keep the existing server data/db.json. Do NOT replace/delete it if you already have live members, PINs and messages.
-2. Replace the existing admin.html, member.html and server.js with these files.
-3. Add leveltrack-admin.html and leveltrack-member.html to the same server folder.
-4. Run: npm install
-5. Run: npm start
-6. Open the site through the server URL, not by opening the HTML file directly.
+Deploy:
+1. Keep the existing data/db.json on the server. Do NOT delete it.
+2. Replace/add the HTML files and server.js from this package.
+3. Run: npm install
+4. Run: npm start
 
-LevelTrack data is stored in the same data/db.json under:
-levelTrack.requests
-levelTrack.upgrades
-levelTrack.incomingPayments
+Dynamic connection:
+- BORNTOWIN5 and LevelTrack use the same server and same data/db.json.
+- Admin/member messages use the same messages store.
+- Member registration and PINs use the same PIN store.
+- Member approval assigns Level 1 membership ID.
+- LevelTrack upgrade request -> admin assignment -> member UTR -> receiver acceptance -> admin verification -> final level activation are stored server-side.
+- LevelTrack Admin and Member read the same server data.
 
-BORNTOWIN5 messages are reused by LevelTrack Notifications, so Admin messages sent through /api/admin/message appear for the logged-in member.
+First registration PIN:
+B5-FMUXNF
+The server automatically creates this PIN only when the database has no members and the PIN is absent. Existing member/PIN data is preserved.
 
-This package uses the existing BORNTOWIN5 password/OTP pattern. For production financial use, add proper server-side authentication, HTTPS, access control and a production database before going live.
+Important:
+This package is code-level integrated. Live hosting still needs npm install and deployment on your actual server. Do not replace an existing production database with an empty one.
