@@ -244,6 +244,8 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 
 <style id="unified-admin-menu-style">
 /* Unified BORNTOWIN5 + LevelTrack admin menu */
+/* Side menu replaces the old in-page navigation */
+main.wrap > .card:has(.nav){display:none!important}
 .nav{display:none!important}
 #integratedMenuBtn,#integratedOverlay,#integratedSidebar,#integratedFrame{display:none!important}
 #unifiedAdminMenuBtn{display:none;position:fixed;top:10px;left:10px;z-index:2147483000;width:46px;height:46px;border:0;border-radius:12px;background:#fff;color:#075B35;font-size:25px;box-shadow:0 3px 14px #0003;cursor:pointer}
@@ -284,12 +286,24 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
  function ready(){const ok=logged();[btn,side].forEach(x=>x&&x.classList.toggle('ready',ok));if(!ok){frame.classList.remove('show');side.classList.remove('open');ov.classList.remove('show');}}
  window.uAdminToggle=function(){if(!btn.classList.contains('ready'))return;side.classList.toggle('open');ov.classList.toggle('show')}
  function close(){side.classList.remove('open');ov.classList.remove('show')}
+ const hero=document.querySelector('main.wrap > .hero');
+ const statsCard=document.querySelector('main.wrap > .card:not(:has(.nav))');
+ function hideMainPanels(){panels.forEach(x=>document.getElementById(x)?.classList.add('hidden'));}
  window.uAdminMain=function(id,b){frame.classList.remove('show');document.querySelectorAll('#unifiedAdminSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();
-   if(id==='dashboard'){panels.forEach(x=>document.getElementById(x)?.classList.add('hidden'));window.scrollTo({top:0,behavior:'smooth'});return;}
-   if(typeof tab==='function') tab(id); window.scrollTo({top:0,behavior:'smooth'});
+   hideMainPanels();
+   if(id==='dashboard'){
+     if(hero) hero.style.display='block'; if(statsCard) statsCard.style.display='block';
+     window.scrollTo({top:0,behavior:'smooth'});return;
+   }
+   if(hero) hero.style.display='none'; if(statsCard) statsCard.style.display='none';
+   document.getElementById(id)?.classList.remove('hidden');
+   window.scrollTo({top:0,behavior:'smooth'});
  }
- window.uAdminLevelTrack=function(b){document.querySelectorAll('#unifiedAdminSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();frame.classList.add('show');}
- frame.src='/leveltrack-admin.html';
+ window.uAdminLevelTrack=function(b){document.querySelectorAll('#unifiedAdminSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();
+   if(hero) hero.style.display='none'; if(statsCard) statsCard.style.display='none'; hideMainPanels(); frame.classList.add('show');
+   frame.src='/leveltrack-admin.html?v=5';
+ }
+ frame.src='/leveltrack-admin.html?v=5';
  ready();setInterval(ready,500);
 })();
 </script>

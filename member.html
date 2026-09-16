@@ -293,11 +293,29 @@ window.addEventListener('online',()=>{if(localStorage.getItem('BORNTOWIN5_MEMBER
  function ready(){const ok=logged();[btn,side].forEach(x=>x&&x.classList.toggle('ready',ok));if(!ok){frame.classList.remove('show');side.classList.remove('open');ov.classList.remove('show');}}
  window.uMemberToggle=function(){if(!btn.classList.contains('ready'))return;side.classList.toggle('open');ov.classList.toggle('show')}
  function close(){side.classList.remove('open');ov.classList.remove('show')}
+ const memberProfile=document.querySelector('main > .profile');
+ const memberStats=document.querySelector('main > .stats');
+ const memberDetail=document.getElementById('detail');
+ const memberTree=Array.from(document.querySelectorAll('main > section.card')).find(x=>x.querySelector('#tree'));
+ const memberSections=[memberProfile,memberStats,memberDetail,document.getElementById('referralCard'),memberTree,document.getElementById('memberMessages'),document.getElementById('leaderWallet')].filter(Boolean);
+ function hideMemberContent(){memberSections.forEach(x=>x.classList.add('u-hidden'))}
+ function showMemberContent(items){hideMemberContent();items.forEach(x=>x.classList.remove('u-hidden'))}
  window.uMemberMain=function(id,b){frame.classList.remove('show');document.querySelectorAll('#unifiedMemberSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();
-   const map={dashboard:null,membership:'referralCard',invite:'referralCard',downline:'tree',levels:'detail',messages:'memberMessages',pinwallet:'leaderWallet'};
-   const target=map[id]; if(target){document.getElementById(target)?.scrollIntoView({behavior:'smooth',block:'start'});}else window.scrollTo({top:0,behavior:'smooth'});
+   const map={
+     dashboard:[memberProfile,memberStats],
+     membership:[memberProfile,memberDetail],
+     invite:[document.getElementById('referralCard')],
+     downline:[memberTree],
+     levels:[memberStats,memberDetail],
+     messages:[document.getElementById('memberMessages')],
+     pinwallet:[document.getElementById('leaderWallet')]
+   };
+   showMemberContent((map[id]||[]).filter(Boolean));
+   window.scrollTo({top:0,behavior:'smooth'});
  }
- window.uMemberLevelTrack=function(b){document.querySelectorAll('#unifiedMemberSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();frame.classList.add('show');}
- frame.src='/leveltrack-member.html'; ready();setInterval(ready,500);
+ window.uMemberLevelTrack=function(b){document.querySelectorAll('#unifiedMemberSidebar .uitem').forEach(x=>x.classList.remove('active'));b.classList.add('active');close();hideMemberContent();frame.classList.add('show');frame.src='/leveltrack-member.html?v=5';}
+ const style=document.createElement('style');style.textContent='.u-hidden{display:none!important}';document.head.appendChild(style);
+ showMemberContent([memberProfile,memberStats]);
+ frame.src='/leveltrack-member.html?v=5'; ready();setInterval(ready,500);
 })();
 </script>
