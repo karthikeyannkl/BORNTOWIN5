@@ -810,15 +810,4 @@ window.addEventListener('magizhServerSync',function(){
 });
 </script>
 <script>window.MAGIZH_SYNC_KEYS=['magizhProducts','magizhCategories','magizhSettings','magizhUsers','magizhB5','magizhOrders','magizhCoinWallet'];</script><script src="/server-sync.js"></script>
-</body></html><script>
-(function(){
-  function embeddedProductCleanup(){
-    if(new URLSearchParams(location.search).get('embedded')!=='1') return;
-    ['loginTopBtn','loginModal','registerModal','newUserRegisterModal','b5RegisterModal'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none'});
-    var els=document.querySelectorAll('[onclick*="openLogin"],[onclick*="openRegister"],[onclick*="openNewUserRegister"],[onclick*="openB5Register"]');
-    els.forEach(function(e){e.style.display='none'});
-    if(typeof syncCustomerHeader==='function') syncCustomerHeader();
-  }
-  document.addEventListener('DOMContentLoaded', function(){setTimeout(embeddedProductCleanup,50);setTimeout(embeddedProductCleanup,500)});
-})();
-</script>
+</body></html>

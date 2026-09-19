@@ -1,19 +1,25 @@
-MAGIZH MASTER — COMPLETE FLAT TEST PACKAGE
+MAGIZH MASTER FINAL V2
 
-Customer:
-  /              -> customer Master Login/Dashboard
-  /product.html  -> Product customer page
-  /referral.html -> Referral member page
-  /level.html    -> Level Tracking page
+Flat root package. No nested module folders.
 
-Admin:
-  /admin.html           -> Master Admin Login/Dashboard
-  /product_admin.html   -> Product Admin
-  /referral_admin.html  -> Referral Admin
-  /level.html           -> Level Tracking Admin/Member/Receiver tabs
+CUSTOMER
+- index.html = Master customer login/register/dashboard/profile
+- First test Activate PIN: B5-FMUXNF (one-time; consumed on first registration)
+- OTP test: 123456
+- Products/Referral/Level pages open original module functionality without a second login.
 
-All files are in ONE ROOT FOLDER. No nested folders are required.
+ADMIN
+- admin.html = Master Admin Login
+- Admin ID: admin
+- Password: ADMIN
+- Product opens original Product Admin without second login.
+- Referral opens original Referral Admin menu/functionality, including PIN Management, Admin PIN Report, Members, Search, Referral Tree, Settings and LevelTrack portal.
+- Level Tracking opens original LevelTrack Admin.
 
-NOTE:
-This package is a flat upload/test package. The individual legacy module files are preserved.
-Before production deployment, the three module data stores should be consolidated into one central database/API.
+LOCKED RULE
+Existing module functionality/options/workflows are preserved. Integration shims only bypass duplicate login and pass the master member/admin identity. Visual design can be changed later without changing module logic.
+
+RUN
+npm install
+npm start
+Open / for customer and /admin.html for admin.

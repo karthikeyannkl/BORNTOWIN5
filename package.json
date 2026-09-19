@@ -1,1 +1,11 @@
-{"name":"magizh-unified-mobile-test","version":"1.0.0","private":true,"scripts":{"start":"node server.js"}}
+{
+  "name": "magizh-master-final-v2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

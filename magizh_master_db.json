@@ -1,0 +1,19 @@
+{
+  "adminPassword": "ADMIN",
+  "members": [],
+  "pins": [
+    {
+      "pin": "B5-FMUXNF",
+      "assignedTo": null,
+      "status": "AVAILABLE",
+      "usedBy": null,
+      "createdAt": "2026-09-19T00:00:00.000Z",
+      "system": true
+    }
+  ],
+  "messages": [],
+  "leveltrackRequests": [],
+  "leveltrackUpgrades": [],
+  "leveltrackPayments": [],
+  "leveltrackMessages": []
+}
