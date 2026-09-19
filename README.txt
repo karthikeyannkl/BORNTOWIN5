@@ -1,27 +1,17 @@
-BORNTOWIN5 + LEVELTRACK DYNAMIC SERVER V7
+BORNTOWIN5 Level Tracking – V26 Dynamic Test
 
-IMPORTANT
-- Replace the deployed server.js and HTML files with this package.
-- Keep the existing data/db.json. Do NOT delete it.
-- Run: npm install
-- Start: npm start
+Files:
+- index.html  : test launcher
+- admin.html  : uploaded V26 Admin design
+- user.html   : uploaded V26 User design
 
-The server now includes the LevelTrack API routes used by:
-- /leveltrack-admin.html
-- /leveltrack-member.html
-- /api/leveltrack/admin/dashboard
-- /api/leveltrack/admin/members
-- /api/leveltrack/admin/member-details/:id
-- /api/leveltrack/admin/requests/:id/assign
-- /api/leveltrack/admin/payments/:id/verify
-- /api/leveltrack/admin/upgrades/:id/final-approve
-- /api/leveltrack/admin/daily-report
-- /api/leveltrack/member/dashboard/:id
-- /api/leveltrack/member/upgrade-request
-- /api/leveltrack/member/upgrade/:id/pay
-- /api/leveltrack/member/incoming/:id/accept
-- /api/leveltrack/member/messages/:id
+Testing:
+1. Open index.html or upload the whole folder/ZIP to your static host.
+2. Open Admin and User in separate tabs.
+3. Both files use the same LocalStorage key:
+   LT_SEQUENTIAL_UPGRADE_TEST_V26
+4. User can add test referrals, request upgrade, enter UTR.
+5. Admin can send payment details and final-approve after receiver confirmation.
+6. RESET TEST DATA clears the local test state.
 
-First Joining PIN: B5-FMUXNF
-
-Existing BORNTOWIN5 members/messages/PIN data are preserved. The LevelTrack collections are added backward-compatibly to the same data/db.json file.
+This is a front-end dynamic test build. It does not connect to a server/database.

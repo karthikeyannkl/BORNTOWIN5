@@ -1,21 +1,33 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>MAGIZH Customer</title><style>
-*{box-sizing:border-box}body{margin:0;background:#f5f7f4;font-family:Arial,sans-serif;color:#173126}.app{max-width:430px;margin:auto;min-height:100vh;background:#fff}.hero{background:linear-gradient(145deg,#075f3b,#0c8050);color:#fff;padding:28px 20px 24px;border-radius:0 0 26px 26px}.brand{font-size:27px;font-weight:900}.sub{opacity:.8;margin-top:4px}.card{background:#fff;border:1px solid #e7ece8;border-radius:20px;padding:16px;margin:14px 16px;box-shadow:0 7px 20px #17312610}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.tile{border:0;border-radius:18px;padding:18px 12px;text-align:left;background:#f1f7f3;color:#124b34;font-weight:800;font-size:16px}.tile span{display:block;font-size:28px;margin-bottom:9px}.btn{width:100%;border:0;border-radius:13px;padding:13px;background:#075f3b;color:#fff;font-weight:800;margin-top:8px}.ghost{background:#fff;color:#075f3b;border:1px solid #075f3b}.input{width:100%;padding:13px;border:1px solid #d7dfda;border-radius:12px;margin:6px 0 10px;font-size:15px}.hidden{display:none}.note{font-size:12px;color:#69776f;line-height:1.5}.status{padding:10px;border-radius:12px;background:#eef8f2;color:#17613f;margin-top:10px;font-size:13px}.bottom{position:sticky;bottom:0;background:#fff;border-top:1px solid #e8ece9;padding:9px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.bottom button{border:0;background:transparent;color:#6a756f;font-size:11px}.bottom b{display:block;color:#075f3b;font-size:20px;margin-bottom:3px}.modal{position:fixed;inset:0;background:#0007;display:flex;align-items:flex-end;justify-content:center;z-index:999}.sheet{width:min(430px,100%);background:#fff;border-radius:24px 24px 0 0;padding:20px;max-height:88vh;overflow:auto}.close{float:right;border:0;background:#edf3ef;border-radius:10px;padding:7px 10px}.profileRow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eef1ef;font-size:13px}
-</style></head><body><div class="app"><section class="hero"><div class="brand">MAGIZH</div><div class="sub">One account • Products • Referral • Levels</div></section><div id="loginCard" class="card"><h2>Welcome</h2><div class="note">Login with your mobile number. For the first test, register using the sample Activate PIN below.</div><input id="loginMobile" class="input" inputmode="numeric" maxlength="10" placeholder="Mobile Number"><input id="loginOtp" class="input hidden" inputmode="numeric" maxlength="6" placeholder="OTP"><button class="btn" onclick="sendOtp()">Send OTP</button><button id="verifyBtn" class="btn hidden" onclick="login()">Verify & Login</button><button class="btn ghost" onclick="openReg()">New Registration</button><div id="loginMsg" class="note"></div></div><div id="dash" class="hidden"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="note">Welcome back</div><h2 id="welcome" style="margin:4px 0"></h2><div class="note" id="uid"></div></div><div style="font-size:34px">👤</div></div></div><div class="grid" style="padding:0 16px"><button class="tile" onclick="go('product.html')"><span>🛍️</span>Products</button><button class="tile" onclick="go('referral.html')"><span>👥</span>Referral</button><button class="tile" onclick="go('level_user.html')"><span>📈</span>My Levels</button><button class="tile" onclick="openProfile()"><span>👤</span>My Profile</button></div><div class="card"><div style="display:flex;justify-content:space-between"><b>🪙 My Coins</b><b id="coins">0</b></div><div class="note" style="margin-top:7px">Coins can be shown here and used inside the Product purchase flow.</div></div><div class="card"><button class="btn ghost" onclick="logout()">Logout</button></div></div><div class="bottom"><button onclick="goHome()"><b>⌂</b>Home</button><button onclick="go('product.html')"><b>🛍</b>Products</button><button onclick="go('referral.html')"><b>👥</b>Referral</button><button onclick="go('level_user.html')"><b>📈</b>Levels</button></div></div>
-<div id="regModal" class="modal hidden"><div class="sheet"><button class="close" onclick="closeReg()">×</button><h2>Registration</h2><input id="rName" class="input" placeholder="Full Name"><input id="rMobile" class="input" inputmode="numeric" maxlength="10" placeholder="Mobile Number"><input id="rReferral" class="input" placeholder="Referral ID (optional)"><input id="rPin" class="input" placeholder="Activate PIN"><div class="status"><b>First test PIN:</b> B5-FMUXNF<br><span class="note">This sample PIN is intended for the first test registration.</span></div><button class="btn" onclick="register()">Register & Activate</button><div id="regMsg" class="note"></div></div></div>
-<div id="profileModal" class="modal hidden"><div class="sheet"><button class="close" onclick="closeProfile()">×</button><h2>My Profile</h2><div id="profileRows"></div><button class="btn ghost" onclick="closeProfile()">Close</button></div></div>
-<script>
-const API='';let otp='';
-function go(p){if(!getUser()){alert('Please login first.');return}location.href=p}
-function goHome(){location.href='index.html'}
-function getUser(){try{return JSON.parse(localStorage.getItem('MAGIZH_MASTER_USER')||'null')}catch(e){return null}}
-function showDash(){const u=getUser();if(!u)return;loginCard.classList.add('hidden');dash.classList.remove('hidden');welcome.textContent=u.name||'Customer';uid.textContent=(u.id||'')+' • '+(u.phone||'');coins.textContent=String(u.coins||0)}
-async function sendOtp(){const m=loginMobile.value.trim();if(!/^\d{10}$/.test(m)){loginMsg.textContent='Enter a valid 10-digit mobile number.';return}const r=await fetch(API+'/api/member/send-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mobile:m})});const d=await r.json();if(!r.ok){loginMsg.textContent=d.error||'OTP failed';return}otp='123456';loginOtp.classList.remove('hidden');verifyBtn.classList.remove('hidden');loginMsg.textContent='Test OTP: 123456';}
-async function login(){const m=loginMobile.value.trim(),o=loginOtp.value.trim();const r=await fetch(API+'/api/member/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mobile:m,otp:o})});const d=await r.json();if(!r.ok){loginMsg.textContent=d.error||'Login failed';return}const u={id:d.member.memberId,name:d.member.name,phone:d.member.mobile,mobile:d.member.mobile,referral:d.member.referral||'',level:d.member.level||1,coins:0};localStorage.setItem('MAGIZH_MASTER_USER',JSON.stringify(u));localStorage.setItem('BORNTOWIN5_MEMBER_ID',u.id);localStorage.setItem('magizhCurrentUserId',u.id);localStorage.setItem('magizhCurrentUser',JSON.stringify(u));showDash()}
-function openReg(){regModal.classList.remove('hidden');const q=new URLSearchParams(location.search).get('ref');if(q)rReferral.value=q}
-function closeReg(){regModal.classList.add('hidden')}
-async function register(){const name=rName.value.trim(),mobile=rMobile.value.trim(),ref=rReferral.value.trim()||'FIRST MEMBER',pin=rPin.value.trim().toUpperCase();if(!name||!/^(\d{10})$/.test(mobile)||!pin){regMsg.textContent='Name, Mobile and Activate PIN are required.';return}const body={name,mobile,referral:ref,pin,gender:'',age:'',education:'',category:'',skill:'',address:'',nominee:'',account:'',ifsc:'',bank:'',branch:''};const r=await fetch(API+'/api/member/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const d=await r.json();if(!r.ok){regMsg.textContent=d.error||'Registration failed';return}const u={id:d.member.memberId,name:d.member.name,phone:d.member.mobile,mobile:d.member.mobile,referral:d.member.referral||'',level:1,coins:0};localStorage.setItem('MAGIZH_MASTER_USER',JSON.stringify(u));localStorage.setItem('BORNTOWIN5_MEMBER_ID',u.id);localStorage.setItem('magizhCurrentUserId',u.id);localStorage.setItem('magizhCurrentUser',JSON.stringify(u));closeReg();showDash();alert('Registration + Activate PIN successful.');}
-function logout(){localStorage.removeItem('MAGIZH_MASTER_USER');sessionStorage.removeItem('magizhCurrentUser');sessionStorage.removeItem('magizhCurrentUserId');location.reload()}
-function openProfile(){const u=getUser();if(!u)return;profileRows.innerHTML=[['Customer ID',u.id],['Full Name',u.name],['Mobile',u.phone],['Referral ID',u.referral||'-'],['Current Level',u.level||1],['Account Status','ACTIVE']].map(x=>'<div class="profileRow"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join('');profileModal.classList.remove('hidden')}
-function closeProfile(){profileModal.classList.add('hidden')}
-(function(){const u=getUser();if(u)showDash()})()
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BORNTOWIN5 Level Tracking – V26 Dynamic Test</title>
+<style>
+body{margin:0;background:#f5f7fb;font-family:system-ui,-apple-system,sans-serif;color:#172033}
+.wrap{max-width:520px;margin:40px auto;padding:20px}
+.card{background:#fff;border:1px solid #e3e7ef;border-radius:18px;padding:22px;box-shadow:0 5px 20px #0000000d}
+h1{font-size:22px;margin:0 0 8px}
+p{color:#667085;font-size:13px;line-height:1.5}
+a{display:block;text-decoration:none;text-align:center;padding:13px;margin-top:12px;border-radius:11px;font-weight:800}
+.admin{background:#075B35;color:#fff}
+.user{background:#8b1e3f;color:#fff}
+.note{margin-top:16px;padding:11px;background:#f7f8fb;border-radius:10px;font-size:11px;color:#667085}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>BORNTOWIN5 Level Tracking</h1>
+    <p>V26 Dynamic Test Package</p>
+    <a class="admin" href="admin.html">OPEN ADMIN LEVEL TRACKING</a>
+    <a class="user" href="user.html">OPEN USER LEVEL TRACKING</a>
+    <div class="note">
+      இந்த test build browser LocalStorage-ல் test data save செய்கிறது.
+      Admin மற்றும் User இரண்டையும் தனித்தனி tab-ல் திறந்து flow-ஐ test செய்யலாம்.
+    </div>
+  </div>
+</div>
+</body>
+</html>
