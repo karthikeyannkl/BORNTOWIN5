@@ -1,14 +1,1 @@
-{
-  "adminPassword": "ADMIN",
-  "members": [],
-  "pins": [
-    {
-      "pin": "B5-NLY8J2",
-      "assignedTo": null,
-      "status": "AVAILABLE",
-      "usedBy": null,
-      "createdAt": "initial"
-    }
-  ],
-  "messages": []
-}
+{"adminPassword":"ADMIN","members":[],"pins":[{"pin":"B5-FMUXNF","assignedTo":"FIRST MEMBER","status":"AVAILABLE","usedBy":null,"createdAt":"2026-09-19T00:00:00.000Z"}],"messages":[]}

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BORNTOWIN5 Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6fa;color:#20283a;font-family:Arial,"Noto Sans Tamil",sans-serif}
+.header{background:#171c29;color:#fff;text-align:center;padding:11px 8px;font-size:14px}
+.brandbar{background:#fff;padding:22px 28px;border-bottom:1px solid #e5e7ed;display:flex;align-items:center;gap:14px}
+.logo{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8e2147,#d19b3d);color:#fff;font-size:26px;font-weight:900}
+.brand{font-size:24px;font-weight:800}.sub{color:#89909d;margin-top:3px}
+.wrap{max-width:720px;margin:auto;padding:28px 24px}
+.hero{background:linear-gradient(135deg,#74183d,#b42d59);color:#fff;border-radius:28px;padding:30px 34px;margin-bottom:26px}
+.badge{display:inline-block;background:#ffffff20;border-radius:22px;padding:8px 16px;font-size:14px;font-weight:700}.hero h1{font-size:42px;margin:18px 0 4px}.hero p{font-size:18px;margin:0;line-height:1.35}
+.stats{background:#fff;border:1px solid #e1e4ea;border-radius:28px;padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px;box-shadow:0 3px 15px #00000008}
+.stat{border:1px solid #e1e4ea;border-radius:20px;text-align:center;padding:18px 8px}.num{font-size:35px;font-weight:900;color:#8e2147}.stat span{display:block;color:#8a919e;margin-top:7px}
+.menu{background:#fff;border:1px solid #e1e4ea;border-radius:28px;padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:26px}
+.menu button{border:0;border-radius:18px;padding:18px 12px;background:#f0f1f6;color:#283147;font-size:18px;font-weight:700}.menu button.active{background:#951d48;color:#fff}
+.panel{background:#fff;border:1px solid #e1e4ea;border-radius:24px;padding:24px;margin-bottom:20px}.panel h2{margin:0 0 16px;font-size:22px}.panel small{color:#818997}
+input,select,textarea{width:100%;padding:13px;border:1px solid #d8dce5;border-radius:11px;margin:6px 0 11px;font-size:15px}button.primary{width:100%;padding:13px;border:0;border-radius:11px;background:#8e2147;color:#fff;font-weight:800;font-size:15px;margin-top:5px}
+.row{display:flex;gap:8px}.row>*{flex:1}.pill{display:inline-block;padding:6px 9px;border-radius:18px;background:#e8f6ed;color:#17613f;font-size:12px;font-weight:800}
+.item{padding:13px;border:1px solid #eee;border-radius:12px;margin:8px 0}.hide{display:none}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid #eee;text-align:left}
+@media(max-width:560px){.wrap{padding:22px 18px}.brandbar{padding:18px}.hero{padding:25px 22px}.hero h1{font-size:34px}.hero p{font-size:16px}.menu{padding:16px;gap:10px}.menu button{font-size:16px;padding:16px 8px}.stats{gap:8px;padding:14px}.num{font-size:29px}}
+</style>
+</head>
+<body>
+<div class="header">BORNTOWIN5 ADMIN</div>
+<div class="brandbar"><div class="logo">B5</div><div><div class="brand">BORNTOWIN5 Admin</div><div class="sub">Control Center</div></div></div>
+<div class="wrap">
+
+<div id="login" class="panel">
+<h2>Admin Login</h2><small>Admin access is private.</small>
+<input id="password" type="password" placeholder="Admin Password">
+<button class="primary" onclick="openAdmin()">Login</button>
+</div>
+
+<div id="dashboard" class="hide">
+<div class="hero"><span class="badge">ADMIN CONTROL PANEL</span><h1>Welcome, Admin</h1><p>Registration • Members • Messages • PIN • Referral Tree</p></div>
+
+<div class="stats">
+<div class="stat"><div class="num" id="total">0</div><span>Total Members</span></div>
+<div class="stat"><div class="num" id="pending">0</div><span>Pending</span></div>
+<div class="stat"><div class="num" id="verified">0</div><span>Verified</span></div>
+</div>
+
+<div class="menu">
+<button class="active" onclick="panel('registrations')">📝 Registrations</button>
+<button onclick="panel('members')">👥 Members</button>
+<button onclick="panel('messages')">📢 Messages</button>
+<button onclick="panel('pins')">🔐 PIN Management</button>
+<button onclick="panel('tree')">🌳 Referral Tree</button>
+<button onclick="panel('settings')">⚙️ Settings</button>
+</div>
+
+<div id="registrations" class="panel"><h2>Registration Review</h2><div id="regList">No registrations yet.</div></div>
+
+<div id="members" class="panel hide"><h2>Members</h2>
+<input id="search" placeholder="Search Mobile / Member ID / Name" oninput="renderMembers()"><div id="memberList"></div></div>
+
+<div id="messages" class="panel hide"><h2>Message Center</h2>
+<select id="target"></select><textarea id="msg" placeholder="Message"></textarea><button class="primary" onclick="sendMessage()">Send Message</button><div id="msgStatus"></div></div>
+
+<div id="pins" class="panel hide"><h2>PIN Management</h2>
+<div class="row"><input id="pinCount" type="number" min="1" value="50"><input id="assign" value="Leader 01"></div>
+<button class="primary" onclick="generatePins()">Generate Random B5 PINs</button>
+<div id="pinStats"></div><div style="overflow:auto"><table><thead><tr><th>#</th><th>PIN</th><th>Status</th><th>Used By</th></tr></thead><tbody id="pinRows"></tbody></table></div></div>
+
+<div id="tree" class="panel hide"><h2>Referral Tree</h2><div id="treeList"></div></div>
+
+<div id="settings" class="panel hide"><h2>Settings</h2><div class="item">Brand <b>BORNTOWIN5</b></div><div class="item">Testing OTP <b>123456</b></div><div class="item">Member ID format <b>B5-XXXXXX Random</b></div></div>
+</div></div>
+
+<script>
+const K='BORNTOWIN5_SHARED_FINAL';let db=JSON.parse(localStorage.getItem(K)||'null')||{pins:[],members:[],messages:[]};
+function save(){localStorage.setItem(K,JSON.stringify(db))}
+function openAdmin(){if(document.getElementById('password').value!=='ADMIN'){alert('Admin Password தவறு.');return}document.getElementById('login').classList.add('hide');document.getElementById('dashboard').classList.remove('hide');refresh()}
+function panel(id){['registrations','members','messages','pins','tree','settings'].forEach(x=>document.getElementById(x).classList.add('hide'));document.getElementById(id).classList.remove('hide');refresh()}
+function refresh(){
+ total.textContent=db.members.length;pending.textContent=db.members.filter(m=>m.status==='PENDING').length;verified.textContent=db.members.filter(m=>m.status==='ACTIVE').length;
+ renderMembers();renderRegs();renderPins();renderTree();refreshTargets()
+}
+function renderRegs(){regList.innerHTML=db.members.length?db.members.map(m=>'<div class="item"><b>'+m.name+'</b> — '+m.id+'<br><small>'+m.mobile+'</small> <span class="pill">'+m.status+'</span></div>').join(''):'No registrations yet.'}
+function renderMembers(){let q=(search?.value||'').toLowerCase();let a=db.members.filter(m=>!q||m.id.toLowerCase().includes(q)||m.name.toLowerCase().includes(q)||m.mobile.includes(q));memberList.innerHTML=a.length?a.map(m=>'<div class="item"><b>'+m.name+'</b><br>'+m.id+'<br>'+m.mobile+'</div>').join(''):'Member கிடைக்கவில்லை.'}
+function refreshTargets(){target.innerHTML='<option value="ALL">All Members</option>'+db.members.map(m=>'<option value="'+m.id+'">'+m.name+' — '+m.id+'</option>').join('')}
+function sendMessage(){let t=target.value,x=msg.value.trim();if(!x){alert('Message எழுதவும்.');return}db.messages.push({target:t,msg:x});save();msg.value='';msgStatus.innerHTML='<div class="item">Message sent successfully.</div>'}
+function rnd(){let x;do{x='B5-'+Math.floor(100000+Math.random()*900000)}while(db.pins.some(p=>p.pin===x)||db.members.some(m=>m.id===x));return x}
+function generatePins(){let n=Math.min(500,Math.max(1,+pinCount.value||50)),a=assign.value||'Leader 01';for(let i=0;i<n;i++)db.pins.push({pin:rnd(),status:'AVAILABLE',leader:a,member:''});save();refresh();alert(n+' random B5 PINs generated.')}
+function renderPins(){let used=db.pins.filter(p=>p.status==='USED').length;pinStats.innerHTML='<div class="item">Total Generated: <b>'+db.pins.length+'</b> &nbsp; Used: <b>'+used+'</b> &nbsp; Available: <b>'+(db.pins.length-used)+'</b></div>';pinRows.innerHTML=db.pins.map((p,i)=>'<tr><td>'+(i+1)+'</td><td><b>'+p.pin+'</b></td><td>'+p.status+'</td><td>'+p.member+'</td></tr>').join('')}
+function renderTree(){treeList.innerHTML=db.members.length?db.members.map(m=>'<div class="item">Level '+m.level+' → <b>'+m.name+'</b> — '+m.id+'<br><small>Referral: '+m.referralId+'</small></div>').join(''):'No members yet.'}
+</script>
+</body></html>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  const p=document.getElementById('password');
+  if(p){p.value='ADMIN'; try{openAdmin();}catch(e){}}
+});
+</script>
