@@ -1,17 +1,15 @@
-BORNTOWIN5 Level Tracking – V26 Dynamic Test
+BORNTOWIN5 + V26 Level Tracking Integration
 
-Files:
-- index.html  : test launcher
-- admin.html  : uploaded V26 Admin design
-- user.html   : uploaded V26 User design
+What changed:
+- Kept the existing BORNTOWIN5 Admin and Member UI/API code.
+- Removed the old Level Tracking submenu items from the unified Admin and Member menus.
+- Added ONE Level Tracking menu button on each side.
+- That single button opens the exact V26 Admin/User Level Tracking files supplied for this test, embedded directly in the page.
+- V26 test flow uses its shared LocalStorage key, so Admin and User V26 test pages can exchange test state when opened in the same browser origin.
 
-Testing:
-1. Open index.html or upload the whole folder/ZIP to your static host.
-2. Open Admin and User in separate tabs.
-3. Both files use the same LocalStorage key:
-   LT_SEQUENTIAL_UPGRADE_TEST_V26
-4. User can add test referrals, request upgrade, enter UTR.
-5. Admin can send payment details and final-approve after receiver confirmation.
-6. RESET TEST DATA clears the local test state.
+Files to replace:
+- admin.html
+- member.html
 
-This is a front-end dynamic test build. It does not connect to a server/database.
+Important:
+This is a front-end integration test build. It keeps the existing server/API code in admin.html and member.html; the V26 module itself is the supplied front-end LocalStorage test flow.
