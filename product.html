@@ -810,4 +810,20 @@ window.addEventListener('magizhServerSync',function(){
 });
 </script>
 <script>window.MAGIZH_SYNC_KEYS=['magizhProducts','magizhCategories','magizhSettings','magizhUsers','magizhB5','magizhOrders','magizhCoinWallet'];</script><script src="/server-sync.js"></script>
-</body></html>
+<style>
+:root{--g:#075f3b;--g2:#0b7a4c;--o:#f29b38;--cream:#fffaf1;--ink:#173126;}
+#magizhShell{position:sticky;top:0;z-index:99999;background:linear-gradient(135deg,var(--g),#063f2a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px #0002;font-family:Arial,sans-serif}
+#magizhShell button{border:0;background:#ffffff18;color:#fff;border-radius:12px;padding:8px 11px;font-weight:800;font-size:13px}#magizhShell b{font-size:15px;letter-spacing:.3px}#magizhShell small{opacity:.75;display:block;font-size:10px}
+</style><script>
+(function(){
+ try{
+  const u=JSON.parse(localStorage.getItem('MAGIZH_MASTER_USER')||'null');
+  if(u){sessionStorage.setItem('magizhCurrentUserId',u.id);sessionStorage.setItem('magizhCurrentUser',JSON.stringify(u));
+   const users=JSON.parse(localStorage.getItem('magizhUsers')||'{}'); users[u.id]={...(users[u.id]||{}),...u,phone:u.phone||u.mobile||''}; localStorage.setItem('magizhUsers',JSON.stringify(users));
+  }
+ }catch(e){}
+ const style=document.createElement('style');style.textContent='#loginTopBtn,#loginBtn,.secondaryLogin,#registerModal,#newUserRegisterModal,#b5RegisterModal,#loginModal{display:none!important}';document.head.appendChild(style);
+ const bar=document.createElement('div');bar.id='magizhShell';bar.innerHTML='<button onclick="location.href='index.html'">← Back</button><div><b>MAGIZH</b><small>Product Purchase</small></div>';
+ document.body.prepend(bar);
+})();
+</script></body></html>

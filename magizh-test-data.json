@@ -1,0 +1,35 @@
+{
+  "updatedAt": 1789806227828,
+  "expiresAt": 1792398227828,
+  "ttlDays": 30,
+  "state": {
+    "magizhUsers": {
+      "B5-4716EF": {
+        "id": "B5-4716EF",
+        "name": "Test User",
+        "phone": "9876543210",
+        "coins": 0,
+        "memberType": "B5",
+        "referral": "FIRST MEMBER",
+        "level": 1
+      }
+    },
+    "magizhOrders": [],
+    "magizhProducts": null,
+    "magizhCategories": null,
+    "magizhSettings": {},
+    "magizhB5": {},
+    "magizhCoinWallet": "0",
+    "magizhAdminPassword": null,
+    "magizhCurrentUser": {
+      "id": "B5-4716EF",
+      "name": "Test User",
+      "phone": "9876543210",
+      "coins": 0,
+      "memberType": "B5",
+      "referral": "FIRST MEMBER",
+      "level": 1
+    },
+    "magizhCurrentUserId": "B5-4716EF"
+  }
+}

@@ -64,11 +64,11 @@ render();</script><style>
 :root{--g:#075f3b;--g2:#0b7a4c;--o:#f29b38;--cream:#fffaf1;--ink:#173126;}
 #magizhShell{position:sticky;top:0;z-index:99999;background:linear-gradient(135deg,var(--g),#063f2a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px #0002;font-family:Arial,sans-serif}
 #magizhShell button{border:0;background:#ffffff18;color:#fff;border-radius:12px;padding:8px 11px;font-weight:800;font-size:13px}#magizhShell b{font-size:15px;letter-spacing:.3px}#magizhShell small{opacity:.75;display:block;font-size:10px}
-</style><div id="magizhShell"><button onclick="location.href='admin.html'">← Back</button><div><b>MAGIZH</b><small>Level Tracking — Admin</small></div></div><style>
+</style><div id="magizhShell"><button onclick="location.href='admin.html'">← Back</button><div><b>MAGIZH</b><small>Level Tracking — Receiver</small></div></div><style>
 #tabMember,#tabAdmin,#tabReceiver{display:none!important}
 </style><script>
 (function(){
- const role='admin';
+ const role='receiver';
  function apply(){
   const all=['member','admin','receiver']; all.forEach(x=>{const e=document.getElementById(x);if(e)e.classList.toggle('hidden',x!==role)});
   const u=document.getElementById('member');

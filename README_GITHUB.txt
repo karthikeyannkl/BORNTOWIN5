@@ -1,25 +1,7 @@
-MAGIZH MASTER FINAL V2
+MAGIZH MASTER V3
 
-Flat root package. No nested module folders.
-
-CUSTOMER
-- index.html = Master customer login/register/dashboard/profile
-- First test Activate PIN: B5-FMUXNF (one-time; consumed on first registration)
-- OTP test: 123456
-- Products/Referral/Level pages open original module functionality without a second login.
-
-ADMIN
-- admin.html = Master Admin Login
-- Admin ID: admin
-- Password: ADMIN
-- Product opens original Product Admin without second login.
-- Referral opens original Referral Admin menu/functionality, including PIN Management, Admin PIN Report, Members, Search, Referral Tree, Settings and LevelTrack portal.
-- Level Tracking opens original LevelTrack Admin.
-
-LOCKED RULE
-Existing module functionality/options/workflows are preserved. Integration shims only bypass duplicate login and pass the master member/admin identity. Visual design can be changed later without changing module logic.
-
-RUN
-npm install
-npm start
-Open / for customer and /admin.html for admin.
+Run: npm install (if needed) then node server.js
+Open: http://localhost:10000/
+Customer: register with sample Activate PIN B5-FMUXNF. Test OTP: 123456.
+Admin: user admin / password ADMIN.
+All files are flat at ZIP root. Product/Referral/Level open as full pages, not iframe containers. Existing module code is used as the functional blueprint; master pages provide the unified navigation and session handoff.

@@ -60,22 +60,4 @@ function render(){
  else{receiverContent.innerHTML='<div class=\"info\"><b>NEW PAYMENT TO CONFIRM</b></div>'+detail('Payment Sent By Member ID',u.payerMemberId)+detail('Payment Received By Member ID',u.payment.receiverId)+detail('Upgrade','L'+u.from+' → L'+u.to)+detail('Amount','₹ '+u.payment.amount)+detail('UTR',u.utr)+'<hr><div class=\"warn\">Please check your bank/UPI and confirm whether the money was received.</div>';receiverButtons.innerHTML='<button class=\"primary\" onclick=\"receiverConfirm()\">✓ PAYMENT RECEIVED</button><br><br><button class=\"secondary\" onclick=\"receiverReject()\">PAYMENT NOT RECEIVED</button>'}
  renderEarnings();
 }
-render();</script><style>
-:root{--g:#075f3b;--g2:#0b7a4c;--o:#f29b38;--cream:#fffaf1;--ink:#173126;}
-#magizhShell{position:sticky;top:0;z-index:99999;background:linear-gradient(135deg,var(--g),#063f2a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px #0002;font-family:Arial,sans-serif}
-#magizhShell button{border:0;background:#ffffff18;color:#fff;border-radius:12px;padding:8px 11px;font-weight:800;font-size:13px}#magizhShell b{font-size:15px;letter-spacing:.3px}#magizhShell small{opacity:.75;display:block;font-size:10px}
-</style><div id="magizhShell"><button onclick="location.href='admin.html'">← Back</button><div><b>MAGIZH</b><small>Level Tracking — Admin</small></div></div><style>
-#tabMember,#tabAdmin,#tabReceiver{display:none!important}
-</style><script>
-(function(){
- const role='admin';
- function apply(){
-  const all=['member','admin','receiver']; all.forEach(x=>{const e=document.getElementById(x);if(e)e.classList.toggle('hidden',x!==role)});
-  const u=document.getElementById('member');
-  if(role==='user'){
-   try{const m=JSON.parse(localStorage.getItem('MAGIZH_MASTER_USER')||'null');if(m){const d=getData();d.member.name=m.name||d.member.name;d.member.mobile=m.phone||m.mobile||d.member.mobile;d.member.id=m.id||d.member.id;save(d)}}catch(e){}
-  }
- }
- window.addEventListener('load',function(){setTimeout(apply,20)});
-})();
-</script></body></html>
+render();</script></body></html>

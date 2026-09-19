@@ -1,11 +1,8 @@
 {
-  "name": "magizh-master-final-v2",
-  "version": "1.0.0",
+  "name": "magizh-cafe-test-server",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.21.2"
   }
 }

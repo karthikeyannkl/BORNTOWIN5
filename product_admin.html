@@ -265,13 +265,10 @@ window.addEventListener('magizhServerSync',function(){
   render(id);
 });
 </script><div class="fullScreenModal" id="imageViewer" onclick="closeImageViewer(event)"><button class="closeFull" onclick="closeImageViewer(event)">×</button><img id="fullPaymentImage" alt="Payment screenshot"></div><style>#adminLoginGate{position:fixed;inset:0;background:#f7f1e8;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px}#adminLoginGate .box{width:min(390px,100%);background:#fff;border-radius:22px;padding:24px}#adminLoginGate input,#adminLoginGate button{width:100%;box-sizing:border-box;padding:13px;border-radius:12px;margin:7px 0}#adminLoginGate button{border:0;background:#e67e22;color:#fff;font-weight:700}</style><div id="adminLoginGate"><div class="box"><h2>Admin Login</h2><input id="adminUser" placeholder="Username"><input id="adminPass" type="password" placeholder="Password"><button onclick="adminSignIn()">Login</button></div></div><script>function adminSignIn(){if(document.getElementById('adminUser').value==='admin'&&document.getElementById('adminPass').value===getAdminPassword()){sessionStorage.setItem('magizhAdminAuth','1');document.getElementById('adminLoginGate').style.display='none'}else alert('Invalid username or password.')}document.addEventListener('DOMContentLoaded',()=>{if(sessionStorage.getItem('magizhAdminAuth')==='1')document.getElementById('adminLoginGate').style.display='none'});</script><script>window.MAGIZH_SYNC_KEYS=['magizhUsers','magizhOrders','magizhProducts','magizhCategories','magizhSettings','magizhB5','magizhCoinWallet','magizhAdminPassword'];</script><script src="/server-sync.js"></script>
-</body></html>
 <script>
-(function(){
-  const master=new URLSearchParams(location.search).get('master')==='1';
-  if(!master)return;
-  sessionStorage.setItem('magizhAdminAuth','1');
-  const gate=document.getElementById('adminLoginGate');
-  if(gate)gate.style.display='none';
-})();
-</script>
+document.addEventListener('DOMContentLoaded',function(){if(sessionStorage.getItem('MAGIZH_MASTER_ADMIN')==='1'){sessionStorage.setItem('magizhAdminAuth','1');const g=document.getElementById('adminLoginGate');if(g)g.style.display='none';}});
+</script><style>
+:root{--g:#075f3b;--g2:#0b7a4c;--o:#f29b38;--cream:#fffaf1;--ink:#173126;}
+#magizhShell{position:sticky;top:0;z-index:99999;background:linear-gradient(135deg,var(--g),#063f2a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 3px 14px #0002;font-family:Arial,sans-serif}
+#magizhShell button{border:0;background:#ffffff18;color:#fff;border-radius:12px;padding:8px 11px;font-weight:800;font-size:13px}#magizhShell b{font-size:15px;letter-spacing:.3px}#magizhShell small{opacity:.75;display:block;font-size:10px}
+</style><div id="magizhShell"><button onclick="location.href='admin.html'">← Back</button><div><b>MAGIZH</b><small>Product Admin</small></div></div></body></html>
